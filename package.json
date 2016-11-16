@@ -1,0 +1,16 @@
+{
+  "name": "the-great-catch",
+  "version": "1.0.0",
+  "description": "Social health tracker for seniors and caretakers.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/awm48/senior-design-group2.git"
+  },
+  "author": "CS491 - Group 2",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/awm48/senior-design-group2#readme"
+}
