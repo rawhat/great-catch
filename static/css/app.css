@@ -1,0 +1,50 @@
+a:visited {
+    color: #1976D2;
+}
+
+.button {
+    border: 1px solid #757575;
+    padding: 2px;
+}
+
+.body-content {
+    text-align: center;
+}
+
+.calendar {
+    position: relative;
+    left: 35%;
+    width: 400px;
+    height: 300px;
+    text-align: center;
+    border: 1px solid #757575;
+}
+
+/* D3 STUFF */
+
+g > path:hover {
+    opacity: .75;
+}
+
+.drug-pie-tooltip, .line-tooltip {
+    background-color: lightsteelblue;
+    border-radius: 2px;
+    border: 1px solid black;
+    opacity: .9;
+    padding: 5px;
+    font-weight: bold;
+}
+
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}

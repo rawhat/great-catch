@@ -14,12 +14,15 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/awm48/senior-design-group2#readme",
   "dependencies": {
+    "d3": "^3.5.17",
+    "eslint-plugin-react": "^6.7.1",
     "koa": "^2.0.0-alpha.7",
     "koa-better-body": "^3.0.2",
     "koa-convert": "^1.2.0",
     "koa-router": "^7.0.1",
     "koa-static": "^3.0.0",
     "koa-views": "^5.2.0",
+    "lodash": "file://node_modules/lodash",
     "pug": "^2.0.0-beta6",
     "react": "^15.3.2",
     "react-dom": "^15.3.2"
@@ -27,9 +30,12 @@
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
-    "babel-preset-stage-0": "^6.16.0"
+    "babel-preset-stage-0": "^6.16.0",
+    "eslint": "^3.11.1",
+    "eslint-plugin-react": "^6.7.1"
   }
 }
