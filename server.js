@@ -23,7 +23,7 @@ var SESSION_KEYS = ['thisisatestkeyreplacewithbetterlater'];
 // app.use(passport.initialize());
 // app.use(passport.session());
 
-const users = [
+let users = [
     { name: 'alex', password: 'test', id: 1 },
     { name: 'test', password: 'test', id: 2 }
 ];
@@ -41,7 +41,7 @@ const users = [
 
 const jwt = require('koa-jwt');
 
-app.use(convert(jwt({ secret: SESSION_KEYS[0] }).unless({ path: ['/', '/login']})));
+app.use(convert(jwt({ secret: SESSION_KEYS[0], passthrough: true }).unless({ path: ['/', '/login']})));
 
 router.post('/login', async (ctx, next) => {
     console.log(ctx.request.fields);
@@ -51,8 +51,28 @@ router.post('/login', async (ctx, next) => {
     let user = users.find(u => u.name === ctx.request.fields.username);
                                                     // seconds
     let token = jwt.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
-    ctx.body = { token };
+    ctx.body = { token, username: user.username };
     ctx.status = 200;
+});
+
+router.get('/user/profile', async (ctx, next) => {
+    // GET USER DATA FROM DB HERE
+    let userData = {
+        username: 'test',
+        dateOfBirth: '01/01/1980',
+        fullName: 'Test User'
+    };
+
+    ctx.body = userData;
+});
+
+router.post('/user/create', async (ctx, next) => {
+    // CREATE USER IN DB, THEN USE IT TO SIGN JWT INSTEAD
+    let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
+    users = users.concat(user);
+    let token = jwt.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
+
+    ctx.body = { token };
 });
 
 router.get('*', async (ctx, next) => {

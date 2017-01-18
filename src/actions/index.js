@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-import { FETCH_DATA, USER_LOGIN_SUCCESS } from './types';
+import {
+    FETCH_DATA,
+    USER_LOGIN_SUCCESS,
+    USER_LOGIN_FAIL,
+    USER_AUTH_REFRESH,
+    USER_CREATE_SUCCESS,
+    USER_CREATE_FAIL,
+    FETCH_USER_DATA
+} from './types';
 
 const SERVER_URL = 'http://localhost:3333';
 
@@ -23,6 +31,35 @@ export function loginUser(formData) {
                 type: USER_LOGIN_SUCCESS,
                 payload: response
             });
+        });
+    };
+}
+
+export function authExistingUser(token) {
+    return {
+        type: USER_AUTH_REFRESH,
+        payload: token
+    };
+}
+
+export function createUser(formData) {
+    // REPLACE WITH AXIOS POST CALL
+    return (dispatch) => {
+        axios.post('/user/create', formData)
+        .then((res) => {
+            dispatch({
+                type: USER_CREATE_SUCCESS,
+                payload: res.data.token
+            });
+        });
+    };
+}
+
+export function fetchUserData(token) {
+    return (dispatch) => {
+        axios.get('/user/profile', { headers: { Authorization: token }})
+        .then((res) => {
+            dispatch({ type: FETCH_USER_DATA, payload: res });
         });
     };
 }
