@@ -14,6 +14,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/awm48/senior-design-group2#readme",
   "dependencies": {
+    "axios": "^0.15.3",
     "d3": "^3.5.17",
     "eslint-plugin-react": "^6.7.1",
     "koa": "^2.0.0-alpha.7",
@@ -25,7 +26,12 @@
     "lodash": "file://node_modules/lodash",
     "pug": "^2.0.0-beta6",
     "react": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "react-dom": "^15.3.2",
+    "react-form": "^1.0.0-beta.1",
+    "react-redux": "^5.0.2",
+    "react-router": "^3.0.1",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
