@@ -39,9 +39,10 @@ let users = [
 //     done(null, currUser);
 // });
 
-const jwt = require('koa-jwt');
+const koaJwt = convert(require('koa-jwt'));
+const jwt = koaJwt({ secret: SESSION_KEYS[0] });
+// app.use(convert(jwt({ secret: SESSION_KEYS[0], passthrough: true }).unless({ path: ['/', '/login']})));
 
-app.use(convert(jwt({ secret: SESSION_KEYS[0], passthrough: true }).unless({ path: ['/', '/login']})));
 
 router.post('/login', async (ctx, next) => {
     console.log(ctx.request.fields);
@@ -55,7 +56,7 @@ router.post('/login', async (ctx, next) => {
     ctx.status = 200;
 });
 
-router.get('/user/profile', async (ctx, next) => {
+router.get('/user/profile', jwt, async (ctx, next) => {
     // GET USER DATA FROM DB HERE
     let userData = {
         username: 'test',
