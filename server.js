@@ -4,16 +4,16 @@ var app = new koa();
 var router = require('koa-router')();
 
 var convert = require('koa-convert');
-app.use(convert(require('koa-static')(__dirname + '/static')));
+// app.use(convert(require('koa-static')(__dirname + '/static')));
 app.use(convert(require('koa-better-body')()));
 
-var views = require('koa-views');
-
-app.use(views(__dirname + '/views', {
-  map: {
-    pug: 'pug'
-  }
-}));
+// var views = require('koa-views');
+//
+// app.use(views(__dirname + '/views', {
+//   map: {
+//     pug: 'pug'
+//   }
+// }));
 
 // var passport = require('koa-passport');
 // var session = require('koa-session');
@@ -22,6 +22,22 @@ var SESSION_KEYS = ['thisisatestkeyreplacewithbetterlater'];
 // app.use(convert(session(app)));
 // app.use(passport.initialize());
 // app.use(passport.session());
+
+var neo4j = require('neo4j-driver').v1;
+
+const makeDBQuery = async ({ queryString, object }) => {
+    const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'helloWorld'));
+    const session = driver.session();
+    try {
+        let response = await session.run(queryString, object);
+        session.close();
+        driver.close();
+        return response.records[0];
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
 
 let users = [
     { name: 'alex', password: 'test', id: 1 },
@@ -43,6 +59,14 @@ const koaJwt = convert(require('koa-jwt'));
 const jwt = koaJwt({ secret: SESSION_KEYS[0] });
 // app.use(convert(jwt({ secret: SESSION_KEYS[0], passthrough: true }).unless({ path: ['/', '/login']})));
 
+router.get('/users/:username', async (ctx, next) => {
+    let queryResults = await makeDBQuery({
+        queryString: 'MATCH (a:User) WHERE a.username = {username} RETURN a',
+        object: { username: ctx.params.username }
+    });
+
+    ctx.body = 'Got back: ' + queryResults;
+});
 
 router.post('/login', async (ctx, next) => {
     console.log(ctx.request.fields);
@@ -56,7 +80,9 @@ router.post('/login', async (ctx, next) => {
     ctx.status = 200;
 });
 
-router.get('/user/profile', jwt, async (ctx, next) => {
+router.get('/user/:id/profile', jwt, async (ctx, next) => {
+    console.log(ctx);
+    console.log(ctx.params.id);
     // GET USER DATA FROM DB HERE
     let userData = {
         username: 'test',
@@ -76,11 +102,11 @@ router.post('/user/create', async (ctx, next) => {
     ctx.body = { token };
 });
 
-router.get('*', async (ctx, next) => {
-    this.body = await ctx.render('index.pug');
-});
+// router.get('*', async (ctx, next) => {
+//     this.body = await ctx.render('index.pug');
+// });
 
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-app.listen(3333);
+app.listen(3000);
