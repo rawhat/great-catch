@@ -57,6 +57,7 @@ let users = [
 
 const koaJwt = convert(require('koa-jwt'));
 const jwt = koaJwt({ secret: SESSION_KEYS[0] });
+const jwebtoken = require('jsonwebtoken');
 // app.use(convert(jwt({ secret: SESSION_KEYS[0], passthrough: true }).unless({ path: ['/', '/login']})));
 
 router.get('/users/:username', async (ctx, next) => {
@@ -75,7 +76,7 @@ router.post('/login', async (ctx, next) => {
     //   -- CONSIDER REPLACING WITH PASSPORT LOCAL STRATEGY
     let user = users.find(u => u.name === ctx.request.fields.username);
                                                     // seconds
-    let token = jwt.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
+    let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
     ctx.body = { token, username: user.username };
     ctx.status = 200;
 });
@@ -97,7 +98,7 @@ router.post('/user/create', async (ctx, next) => {
     // CREATE USER IN DB, THEN USE IT TO SIGN JWT INSTEAD
     let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
     users = users.concat(user);
-    let token = jwt.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
+    let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
 
     ctx.body = { token };
 });
