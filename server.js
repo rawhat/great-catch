@@ -102,9 +102,9 @@ router.post('/user/create', async (ctx, next) => {
     ctx.body = { token };
 });
 
-// router.get('*', async (ctx, next) => {
-//     this.body = await ctx.render('index.pug');
-// });
+router.get('*', async (ctx, next) => {
+    this.body = await ctx.render('index.pug');
+});
 
 app.use(router.routes());
 app.use(router.allowedMethods());
