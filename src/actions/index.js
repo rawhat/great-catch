@@ -10,7 +10,8 @@ import {
     FETCH_USER_DATA
 } from './types';
 
-const SERVER_URL = (process.env.NODE_ENV || 'dev') == 'production' ? 'http://35.161.131.125' : 'http://localhost:3000';
+let SERVER_URL = 'http://localhost:3000';
+if(process.env.NODE_ENV == 'production') SERVER_URL = 'http://35.161.131.125';
 
 export function loginUser(formData) {
     // return (dispatch) => {

@@ -1,5 +1,7 @@
 var webpack = require('webpack');
 
+process.env.NODE_ENV = 'production';
+
 module.exports = {
     entry: [ 'babel-polyfill', __dirname + '/src/' + 'app.js' ],
     output: {
@@ -20,13 +22,20 @@ module.exports = {
                         ]
                 }
             }
-        ],
-        plugins: [
-          new webpack.DefinePlugin({
-            'process.env': {
-              'NODE_ENV': JSON.stringify('production')
-            }
-          })
-        ],
-    }
+        ]
+    },
+    plugins: [
+        // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+          compress: { warnings: false },
+          comments: false,
+          sourceMap: false,
+          mangle: true,
+          minimize: true
+        }),
+        new webpack.optimize.AggressiveMergingPlugin(),
+        new webpack.EnvironmentPlugin(['NODE_ENV'])
+    ],
 };
