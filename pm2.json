@@ -1,0 +1,7 @@
+{ "apps": 
+	[{
+		"name":	"webserver",
+		"script": "server.js",
+		"node_args": ["--harmony"]
+	}]
+}
