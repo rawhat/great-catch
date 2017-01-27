@@ -4,16 +4,16 @@ var app = new koa();
 var router = require('koa-router')();
 
 var convert = require('koa-convert');
-// app.use(convert(require('koa-static')(__dirname + '/static')));
+app.use(convert(require('koa-static')(__dirname + '/static')));
 app.use(convert(require('koa-better-body')()));
 
-// var views = require('koa-views');
-//
-// app.use(views(__dirname + '/views', {
-//   map: {
-//     pug: 'pug'
-//   }
-// }));
+var views = require('koa-views');
+
+app.use(views(__dirname + '/views', {
+  map: {
+    pug: 'pug'
+  }
+}));
 
 // var passport = require('koa-passport');
 // var session = require('koa-session');
