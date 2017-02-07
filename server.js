@@ -128,35 +128,41 @@ router.get('/user/:id/profile', async (ctx, next) => {
 });
 
 router.post('/user/create', async (ctx, next) => {
-    let { username, password, email } = ctx.request.fields;
+    let { username, password, password_repeat, email } = ctx.request.fields;
 
     // fields:
     //  { username, password, password_repeat, email }  -- any more?
 
     // CREATE USER IN DB, THEN USE IT TO SIGN JWT INSTEAD
 
-    let { records, error } = await makeDBQuery({ 
-        queryString: 'CREATE (u:User { username: {username}, password: {password}, email: {email}}) RETURN u AS user', 
-        object: {
-            username,
-            password,
-            email
+    if(password === password_repeat) {
+
+        let { records, error } = await makeDBQuery({ 
+            queryString: 'CREATE (u:User { username: {username}, password: {password}, email: {email}}) RETURN u AS user', 
+            object: {
+                username,
+                password,
+                email
+            }
+        });
+
+        if(!error) {
+            let user = _.omit(records[0].get('user').properties, password);
+            // let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
+            users = users.concat(user);
+
+            // let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
+
+            // ctx.body = { token };
+            console.log('user', user);
+            ctx.body = 'user created';
         }
-    });
-
-    if(!error) {
-        let user = _.omit(records[0].get('user').properties, password);
-        // let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
-        users = users.concat(user);
-
-        // let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
-
-        // ctx.body = { token };
-        console.log('user', user);
-        ctx.body = 'user created';
+        else {
+            console.error(error);
+        }
     }
     else {
-        console.error(error);
+        ctx.status = 401;
     }
 });
 
