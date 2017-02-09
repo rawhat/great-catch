@@ -14,8 +14,8 @@ const passport = require('passport');
 const FitbitStrategy = require('passport-fitbit-oauth2').FitbitOAuth2Strategy;
 
 passport.use(new FitbitStrategy({
-	clientID: '',
-	clientSecret: '',
+	clientID: '22852C',
+	clientSecret: '9afe2c57a50708816966d992bf8fa4f7',
 	callbackUrl: 'http://www.greatcatchhelp.com/auth/fitbit/callback'
 },
 (accessToken, refreshToken, profile, done) => {
