@@ -10,7 +10,7 @@ const koaJwt = convert(require('koa-jwt'));
 const jwt = koaJwt({ secret: SESSION_KEYS[0] });
 const jwebtoken = require('jsonwebtoken');
 
-const passport = require('passport');
+const passport = require('koa-passport');
 const FitbitStrategy = require('passport-fitbit-oauth2').FitbitOAuth2Strategy;
 
 passport.use(new FitbitStrategy({
@@ -146,9 +146,7 @@ router.post('/user/create', async (ctx, next) => {
     }
 });
 
-router.get('/auth/fitbit', (ctx, next) => {
-	passport.authenticate('fitbit', { scope: ['activity', 'heartrate', 'sleep', 'weight']})
-});
+router.get('/auth/fitbit', passport.authenticate('fitbit', { scope: ['activity', 'heartrate', 'sleep', 'weight']}));
 
 router.get('/auth/fitbit/callback', passport.authenticate('fitbit', {
 	successRedirect: '/auth/fitbit/success',
@@ -164,5 +162,6 @@ router.get('/auth/fitbit/failure', (ctx, next) => {
 })
 
 module.exports = {
-    router
+    router,
+	passport
 };
