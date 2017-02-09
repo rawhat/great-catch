@@ -153,7 +153,8 @@ router.get('/auth/fitbit', (ctx, next) => {
 router.get('/auth/fitbit/callback', async (ctx, next) => {
 	// console.log(ctx);
 	let user = await fitbitAuth.code.getToken(ctx.originalUrl);
-	ctx.body = user.accessToken;
+	console.log(user);
+	ctx.body = 'got access token?';
 });
 
 module.exports = {
