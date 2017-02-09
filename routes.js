@@ -16,7 +16,7 @@ const fitbitAuth = new ClientOauth2({
     clientSecret: '9afe2c57a50708816966d992bf8fa4f7',
     accessTokenUri: 'https://api.fitbit.com/oauth2/token',
     authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
-    redirectUri: 'http://www.greatcatchhelp.com/api/fitbit/callback',
+    redirectUri: 'http://www.greatcatchhelp.com/auth/fitbit/callback',
     scopes: ['activity', 'heartrate', 'nutrition', 'sleep', 'weight']
 });
 
