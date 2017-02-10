@@ -4,7 +4,6 @@ var koa = require('koa');
 var app = new koa();
 
 const router = require('./routes.js').router;
-const passport = require('./routes.js').passport;
 
 var convert = require('koa-convert');
 app.use(convert(require('koa-better-body')()));
@@ -52,7 +51,6 @@ router.get('*', async (ctx) => {
     this.body = await ctx.render('index.pug');
 });
 
-app.use(passport.initialize());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
