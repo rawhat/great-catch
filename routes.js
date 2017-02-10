@@ -202,7 +202,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             user_id 
         };
 
-        ctx.session = Object.assign(ctx.session, { ...bodyData });
+        ctx.session = Object.assign(ctx.session, bodyData);
         ctx.redirect('/user/profile');
     }
     catch (error) {
