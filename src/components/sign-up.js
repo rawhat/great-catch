@@ -26,7 +26,7 @@ class SignUp extends Component {
                 <form onSubmit={handleSubmit(this.onSubmit)}>
                     <Field name='username' labelText='Username' type='text' component={renderField} />
                     <Field name='password' labelText='Password' type='password' component={renderField} />
-                    <Field name='password-repeat' labelText='Repeat Password' type='password' component={renderField} />
+                    <Field name='password_repeat' labelText='Repeat Password' type='password' component={renderField} />
                     <Field name='email' labelText='Email' type='text' component={renderField} />
                     <button type='submit' className="btn btn-primary">Signup</button>
                     <Link to='/' className='btn btn-danger'>Cancel</Link>
@@ -42,7 +42,7 @@ const validate = () => {
 
 const SignUpComponent = reduxForm({
     form: 'SignUp',
-    fields: ['username', 'password', 'password-repeat', 'email'],
+    fields: ['username', 'password', 'password_repeat', 'email'],
     validate
 })(SignUp);
 
