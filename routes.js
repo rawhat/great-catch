@@ -184,9 +184,13 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             headers,
             params
         });
-
-        let response = await request.request();
-        console.log(response.data);
+        try {
+            let response = await request.request();
+            console.log(response.data);
+        }
+        catch (e) {
+            console.error(e);
+        }
     }
 });
 
