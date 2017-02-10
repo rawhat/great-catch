@@ -189,7 +189,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             console.log(response.data);
         }
         catch (e) {
-            console.error(e.data.errors);
+            console.error(e);
         }
     }
 });
