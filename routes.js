@@ -152,7 +152,7 @@ router.get('/auth/fitbit', (ctx) => {
         authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
         redirectUri: REDIRECT_URI,
         scopes: ['activity', 'heartrate', 'sleep', 'weight'],
-        state: username
+        state: Buffer.from(username).toString('base64')
     });
 
     var uri = fitbitAuth.code.getUri();
@@ -162,9 +162,11 @@ router.get('/auth/fitbit', (ctx) => {
 const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
 router.get('/auth/fitbit/callback', async (ctx) => {
     let url = ctx.originalUrl;
-    console.log('original url: ' + url);
+
     let match = url.match(/\?code=(.*)[#_=_]?$/)[1];
     let code = match.split('&')[0].split('#')[0];
+
+    let state = match.split('&')[1].match(/state=(.*)/)[1];
 
     let headers = {
         Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
@@ -174,7 +176,8 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         client_id: CLIENT_ID,
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
-        code
+        code,
+        state
     };
 
     let request = axios.create({
