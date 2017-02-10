@@ -159,48 +159,44 @@ router.get('/auth/fitbit', (ctx) => {
 
 const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
 router.get('/auth/fitbit/callback', async (ctx) => {
-    if(ctx.body) {
-        console.log('body');
-        console.log(ctx.body);
+    let url = ctx.originalUrl;
+    // console.log(url);
+    let code = url.match(/\?code=(.*)[#_=_]?$/)[1];
+
+    let headers = {
+        Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
+    };
+
+    let params = {
+        client_id: CLIENT_ID,
+        grant_type: 'authorization_code',
+        redirect_uri: REDIRECT_URI,
+        code
+    };
+
+    let request = axios.create({
+        headers,
+        params
+    });
+    try {
+        let response = await request.post(fitbitTokenUrl);
+        // console.log('response data');
+        // console.log(response.data);
+        let { access_token, refresh_token, user_id } = response.data;
+        ctx.body = response.data;
     }
-    else {
-        let url = ctx.originalUrl;
-        console.log(url);
-        let code = url.match(/\?code=(.*)[#_=_]?$/)[1];
-
-        let headers = {
-            Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
-        };
-
-        let params = {
-            client_id: CLIENT_ID,
-            grant_type: 'authorization_code',
-            redirect_uri: REDIRECT_URI,
-            code
-        };
-
-        let request = axios.create({
-            headers,
-            params
-        });
-        try {
-            let response = await request.post(fitbitTokenUrl);
-            console.log('response data');
-            console.log(response.data);
+    catch (error) {
+        if (error.response) {
+            // The request was made, but the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
         }
-        catch (error) {
-            if (error.response) {
-                // The request was made, but the server responded with a status code
-                // that falls out of the range of 2xx
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-        }
+        console.log(error.config);
     }
 });
 
