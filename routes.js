@@ -163,7 +163,7 @@ const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
 router.get('/auth/fitbit/callback', async (ctx) => {
     let url = ctx.originalUrl;
     // console.log(url);
-    let code = url.match(/\?code=(.*)[#_=_]?$/)[1];
+    let code = url.match(/\?code=(.*)[#_=_]?[&.*]$/)[1];
 
     let headers = {
         Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
