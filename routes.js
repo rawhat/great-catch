@@ -151,13 +151,16 @@ router.get('/auth/fitbit', (ctx) => {
     ctx.redirect(uri);
 });
 
-router.get('/auth/fitbit/callback', async (ctx) => {
+router.get('/auth/fitbit/callback', (ctx) => {
     let url = ctx.originalUrl;
 
     debugger;
     fitbitAuth.code.getToken(url)
     .then((user) => {
         console.log(user);
+    })
+    .catch(e => {
+        console.error(e);
     });
 });
 
