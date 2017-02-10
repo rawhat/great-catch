@@ -82,6 +82,7 @@ router.post('/login', async (ctx, next) => {
 });
 
 router.get('/user/profile', async (ctx, next) => {
+    console.log(ctx.cookies);
     ctx.body = { auth_token: ctx.cookies.get('access_token') };
 });
 
