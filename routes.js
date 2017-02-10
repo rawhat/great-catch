@@ -164,7 +164,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
     }
     else {
         let url = ctx.originalUrl;
-
+        console.log(url);
         let code = url.match(/\?code=(.*)#_=_$/)[1];
 
         let headers = {
