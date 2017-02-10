@@ -201,14 +201,12 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         let response = await request.post(fitbitTokenUrl);
 
         let { access_token, refresh_token, user_id } = response.data;
-        let bodyData = { 
-            access_token, 
-            refresh_token, 
-            user_id 
-        };
 
-        ctx.session = Object.assign(ctx.session, bodyData);
-        ctx.redirect('/user/profile');
+        ctx.session.access_token = access_token;
+        ctx.session.refresh_token = refresh_token;
+        ctx.session.user_id = user_id;
+
+        ctx.redirect('/dashboard');
     }
     catch (error) {
         if (error.response) {
