@@ -165,6 +165,8 @@ router.get('/auth/fitbit/callback', async (ctx) => {
     // console.log(url);
     let match = url.match(/\?code=(.*)[#_=_]?$/)[1];
     let code = match[1].split('&')[0].split('#')[0];
+    console.log(match);
+    console.log(code);
 
     let headers = {
         Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
