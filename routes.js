@@ -171,14 +171,19 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
         };
 
-        let queryString = [
-            `client_id=${CLIENT_ID}`, 
-            'grant_type=authorization_code',
-            `redirect_uri=${REDIRECT_URI}`,
-            `code=${code}`
-        ].join('&');
+        let params = {
+            client_id: CLIENT_ID,
+            grant_type: 'authorization_code',
+            redirect_uri: REDIRECT_URI,
+            code
+        };
 
-        let response = await axios.post(`${fitbitTokenUrl}?${queryString}`);
+        let response = await axios.create({
+            url: `${fitbitTokenUrl}?${queryString}`,
+            method: 'POST',
+            headers,
+            params
+        });
         console.log(response);
     }
 });
