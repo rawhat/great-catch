@@ -2,11 +2,15 @@ var path = require('path');
 var _ = require('lodash');
 var koa = require('koa');
 var app = new koa();
+const session = require('koa-session');
+var SESSION_KEYS = require('./functions.js').SESSION_KEYS;
 
 const router = require('./routes.js').router;
 
 var convert = require('koa-convert');
 app.use(convert(require('koa-better-body')()));
+
+app.use(convert(session(app)));
 
 var views = require('koa-views');
 
@@ -20,7 +24,7 @@ app.use(convert(require('koa-static')(path.join(__dirname, 'static'))));
 
 // var passport = require('koa-passport');
 // var session = require('koa-session');
-// app.keys = SESSION_KEYS;
+app.keys = SESSION_KEYS;
 // app.use(convert(session(app)));
 // app.use(passport.initialize());
 // app.use(passport.session());
