@@ -18,15 +18,6 @@ const REDIRECT_URI = 'http://www.greatcatchhelp.com/auth/fitbit/callback';
 
 var ClientOAuth2 = require('client-oauth2');
 
-var fitbitAuth = new ClientOAuth2({
-  clientId: CLIENT_ID,
-  clientSecret: CLIENT_SECRET,
-  accessTokenUri: 'https://api.fitbit.com/oauth2/token',
-  authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
-  redirectUri: REDIRECT_URI,
-  scopes: ['activity', 'heartrate', 'sleep', 'weight']
-});
-
 /**
  * @swagger
  * /login:
@@ -152,8 +143,19 @@ router.post('/user/create', async (ctx, next) => {
 });
 
 router.get('/auth/fitbit', (ctx) => {
+    let { username } = ctx.query;
+
+    var fitbitAuth = new ClientOAuth2({
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        accessTokenUri: 'https://api.fitbit.com/oauth2/token',
+        authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
+        redirectUri: REDIRECT_URI,
+        scopes: ['activity', 'heartrate', 'sleep', 'weight'],
+        state: username
+    });
+
     var uri = fitbitAuth.code.getUri();
-    console.log(uri);
     ctx.redirect(uri);
 });
 
@@ -180,10 +182,13 @@ router.get('/auth/fitbit/callback', async (ctx) => {
     });
     try {
         let response = await request.post(fitbitTokenUrl);
-        // console.log('response data');
-        // console.log(response.data);
+        console.log(response);
         let { access_token, refresh_token, user_id } = response.data;
-        ctx.body = response.data;
+
+        // write this content to database
+
+
+        ctx.redirect('/profile');
     }
     catch (error) {
         if (error.response) {
