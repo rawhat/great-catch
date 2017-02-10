@@ -160,6 +160,7 @@ router.get('/auth/fitbit', (ctx) => {
 const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
 router.get('/auth/fitbit/callback', async (ctx) => {
     if(ctx.body) {
+        console.log('body');
         console.log(ctx.body);
     }
     else {
@@ -184,6 +185,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         });
         try {
             let response = await request.post(fitbitTokenUrl);
+            console.log('response data');
             console.log(response.data);
         }
         catch (error) {
