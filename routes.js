@@ -184,9 +184,10 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         client_id: CLIENT_ID,
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
-        code,
-        state
+        code
     };
+
+    if(state) params = Object.assign(params, { state });
 
     let request = axios.create({
         headers,
