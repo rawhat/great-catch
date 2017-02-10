@@ -81,6 +81,10 @@ router.post('/login', async (ctx, next) => {
     }
 });
 
+router.get('/user/profile', async (ctx, next) => {
+    ctx.body = { data: [1, 2, 3, 4, 5] };
+});
+
 router.get('/user/:id/profile', async (ctx, next) => {
     // GET USER DATA FROM DB HERE
     let { id } = ctx.params;
@@ -197,7 +201,8 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             user_id 
         };
 
-        ctx.body = bodyData;
+        ctx.session = Object.assign(ctx.session, bodyData);
+        ctx.redirect('/user/profile');
     }
     catch (error) {
         if (error.response) {
@@ -233,7 +238,8 @@ router.post('/auth/fitbit/refresh', async (ctx) => {
     try {
         let response = await request.post(fitbitTokenUrl);
 
-        ctx.body = response.data;
+        ctx.session = Object.assign(ctx.session, response.data);
+        ctx.redirect('/user/profile');
     }
     catch (error) {
         if (error.response) {
