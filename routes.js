@@ -179,13 +179,11 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         };
 
         let request = axios.create({
-            url: fitbitTokenUrl,
-            method: 'post',
             headers,
             params
         });
         try {
-            let response = await request.post();
+            let response = await request.post(fitbitTokenUrl);
             console.log(response.data);
         }
         catch (error) {
