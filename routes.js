@@ -152,14 +152,13 @@ router.get('/auth/fitbit', (ctx) => {
 });
 
 router.get('/auth/fitbit/callback', async (ctx) => {
-    console.log(ctx);
-    // try {
-    //     let user = await fitbitAuth.code.getToken(ctx.originalUrl);
-    //     console.log(user);
-    // }
-    // catch(e) {
-    //     console.error(e);
-    // }
+    let url = ctx.originalUrl;
+
+    debugger;
+    fitbitAuth.code.getToken(url)
+    .then((user) => {
+        console.log(user);
+    });
 });
 
 module.exports = {
