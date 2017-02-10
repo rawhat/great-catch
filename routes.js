@@ -157,6 +157,7 @@ router.get('/auth/fitbit', (ctx) => {
     ctx.redirect(uri);
 });
 
+<<<<<<< HEAD
 const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
 router.get('/auth/fitbit/callback', async (ctx) => {
     if(ctx.body) {
@@ -181,6 +182,19 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         let response = await axios.post(`${fitbitTokenUrl}?${queryString}`);
         console.log(response);
     }
+=======
+router.get('/auth/fitbit/callback', (ctx) => {
+    let url = ctx.originalUrl;
+
+    debugger;
+    fitbitAuth.code.getToken(url)
+    .then((user) => {
+        console.log(user);
+    })
+    .catch(e => {
+        console.error(e);
+    });
+>>>>>>> 6644a557fcd2409fb4fbe7f22a794cc9ba86e230
 });
 
 module.exports = {
