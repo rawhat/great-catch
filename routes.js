@@ -18,6 +18,10 @@ const REDIRECT_URI = 'http://www.greatcatchhelp.com/auth/fitbit/callback';
 
 var ClientOAuth2 = require('client-oauth2');
 
+let encodeClientStrings = () => {
+    return Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
+}
+
 /**
  * @swagger
  * /login:
@@ -151,8 +155,7 @@ router.get('/auth/fitbit', (ctx) => {
         accessTokenUri: 'https://api.fitbit.com/oauth2/token',
         authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
         redirectUri: REDIRECT_URI,
-        scopes: ['activity', 'heartrate', 'sleep', 'weight'],
-        state: Buffer.from(username).toString('base64')
+        scopes: ['activity', 'heartrate', 'sleep', 'weight']
     });
 
     var uri = fitbitAuth.code.getUri();
@@ -169,7 +172,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
     let state = match.split('&')[1].match(/state=(.*)/)[1];
 
     let headers = {
-        Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
+        Authorization: `Basic ${encodeClientStrings()}`
     };
 
     let params = {
@@ -193,7 +196,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             refresh_token, 
             user_id 
         };
-        
+
         ctx.body = bodyData;
     }
     catch (error) {
@@ -210,6 +213,65 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         console.log(error.config);
     }
 });
+
+router.post('/auth/fitbit/refresh', async (ctx) => {
+    let { refresh_token } = ctx.request.fields;
+
+     let headers = {
+        Authorization: `Basic ${encodeClientStrings()}`
+    };
+
+    let params = {
+        grant_type: 'refresh_token',
+        refresh_token
+    };
+
+    let request = axios.create({
+        headers,
+        params
+    });
+    try {
+        let response = await request.post(fitbitTokenUrl);
+
+        ctx.body = response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            // The request was made, but the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
+        }
+        console.log(error.config);
+    }
+});
+
+router.post('/api/fitbit', async (ctx) => {
+    let { data_set, date = 'today', period = '1y', access_token } = ctx.request.fields;
+
+    let url = 'https://api.fitbit.com/1/user/-';
+    switch(data_set) {
+        case 'heart_rate': {
+            url += `/activities/heart/date/${date}/${period}.json`;
+            break;
+        }
+    }
+
+    let headers = {
+        Authentication: `Basic ${encodeClientStrings()}`
+    };
+
+    let requestObject = axios.create({
+        headers
+    });
+
+    let response = await requestObject.get(url);
+    console.log(response);
+})
 
 module.exports = {
     router
