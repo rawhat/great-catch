@@ -10,7 +10,7 @@ import {
     FETCH_USER_DATA
 } from './types';
 
-let SERVER_URL = 'http://greatcatchhelp.comg';
+let SERVER_URL = 'http://greatcatchhelp.com';
 if(process.env.NODE_ENV == 'production') SERVER_URL = 'http://greatcatchhelp.com';
 
 export function loginUser(formData) {
