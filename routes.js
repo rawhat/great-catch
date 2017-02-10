@@ -147,6 +147,7 @@ router.post('/user/create', async (ctx, next) => {
 
 router.get('/auth/fitbit', (ctx) => {
     var uri = fitbitAuth.code.getUri();
+    console.log(uri);
     ctx.redirect(uri);
 });
 
