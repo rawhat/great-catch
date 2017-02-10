@@ -1,5 +1,7 @@
 var _ = require('lodash');
 
+const axios = require('axios');
+
 var convert = require('koa-convert');
 var router = require('koa-router')();
 
@@ -10,16 +12,20 @@ const koaJwt = convert(require('koa-jwt'));
 const jwt = koaJwt({ secret: SESSION_KEYS[0] });
 const jwebtoken = require('jsonwebtoken');
 
-var ClientOAuth2 = require('client-oauth2')
+const CLIENT_ID = '22852C';
+const CLIENT_SECRET = '9afe2c57a50708816966d992bf8fa4f7';
+const REDIRECT_URI = 'http://www.greatcatchhelp.com/auth/fitbit/callback';
+
+var ClientOAuth2 = require('client-oauth2');
 
 var fitbitAuth = new ClientOAuth2({
-  clientId: '22852C',
-  clientSecret: '9afe2c57a50708816966d992bf8fa4f7',
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
   accessTokenUri: 'https://api.fitbit.com/oauth2/token',
   authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
-  redirectUri: 'http://www.greatcatchhelp.com/auth/fitbit/callback',
+  redirectUri: REDIRECT_URI,
   scopes: ['activity', 'heartrate', 'sleep', 'weight']
-})
+});
 
 /**
  * @swagger
@@ -151,13 +157,29 @@ router.get('/auth/fitbit', (ctx) => {
     ctx.redirect(uri);
 });
 
+const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
 router.get('/auth/fitbit/callback', async (ctx) => {
-    try {
-        let user = await fitbitAuth.code.getToken(ctx.originalUrl);
-        console.log(user);
+    if(ctx.body) {
+        console.log(ctx.body);
     }
-    catch(e) {
-        console.error(e);
+    else {
+        let url = ctx.originalUrl;
+
+        let code = url.match(/?code=(.*)#_=_$/)[1];
+
+        let headers = {
+            Authorization: `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
+        };
+
+        let queryString = [
+            `client_id=${CLIENT_ID}`, 
+            'grant_type=authorization_code',
+            `redirect_uri=${REDIRECT_URI}`
+            `code=${code}`
+        ].join('&');
+
+        let response = await axios.post(`${fitbitTokenUrl}?${queryString}`);
+        console.log(response);
     }
 });
 
