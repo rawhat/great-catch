@@ -133,13 +133,14 @@ router.post('/user/create', async (ctx, next) => {
         if(!error) {
             let user = _.omit(records[0].get('user').properties, password);
             // let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
-            users = users.concat(user);
+            // users = users.concat(user);
 
             // let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
 
             // ctx.body = { token };
             console.log('user', user);
-            ctx.body = 'user created';
+            ctx.body = _.omit(user, 'password');
+            ctx.status = 203;
         }
         else {
             console.error(error);
