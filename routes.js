@@ -184,7 +184,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             headers,
             params
         });
-        console.log(response);
+        console.log(response.data);
     }
 });
 
