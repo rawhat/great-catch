@@ -150,9 +150,9 @@ router.get('/auth/fitbit', (ctx) => {
     ctx.redirect(uri);
 });
 
-router.get('/auth/fitbit/callback', (ctx) => {
+router.get('/auth/fitbit/callback', async (ctx) => {
     try {
-        let user = fitbitAuth.code.getToken(ctx.originalUrl);
+        let user = await fitbitAuth.code.getToken(ctx.originalUrl);
         console.log(user);
     }
     catch(e) {
