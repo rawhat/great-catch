@@ -82,7 +82,7 @@ router.post('/login', async (ctx, next) => {
 });
 
 router.get('/user/profile', async (ctx, next) => {
-    ctx.body = { data: [1, 2, 3, 4, 5] };
+    ctx.body = { auth_token: ctx.session.access_token };
 });
 
 router.get('/user/:id/profile', async (ctx, next) => {
@@ -202,7 +202,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
             user_id 
         };
 
-        ctx.session = Object.assign(ctx.session, bodyData);
+        ctx.session = Object.assign(ctx.session, { ...bodyData });
         ctx.redirect('/user/profile');
     }
     catch (error) {
