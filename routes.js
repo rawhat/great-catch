@@ -186,13 +186,15 @@ router.get('/auth/fitbit/callback', async (ctx) => {
     });
     try {
         let response = await request.post(fitbitTokenUrl);
-        console.log(response);
+
         let { access_token, refresh_token, user_id } = response.data;
-
-        // write this content to database
-
-
-        ctx.redirect('/profile');
+        let bodyData = { 
+            access_token, 
+            refresh_token, 
+            user_id 
+        };
+        
+        ctx.body = bodyData;
     }
     catch (error) {
         if (error.response) {
