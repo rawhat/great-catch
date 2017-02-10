@@ -156,6 +156,5 @@ router.get('/auth/fitbit/callback', (ctx) => {
 });
 
 module.exports = {
-    router,
-	passport
+    router
 };
