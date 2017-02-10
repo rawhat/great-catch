@@ -10,17 +10,16 @@ const koaJwt = convert(require('koa-jwt'));
 const jwt = koaJwt({ secret: SESSION_KEYS[0] });
 const jwebtoken = require('jsonwebtoken');
 
-const passport = require('koa-passport');
-const FitbitStrategy = require('passport-fitbit-oauth2').FitbitOAuth2Strategy;
+var ClientOAuth2 = require('client-oauth2')
 
-passport.use(new FitbitStrategy({
-	clientID: '22852C',
-	clientSecret: '9afe2c57a50708816966d992bf8fa4f7',
-	callbackUrl: 'http://www.greatcatchhelp.com/auth/fitbit/callback'
-},
-(accessToken, refreshToken, profile, done) => {
-	return done(null, { accessToken, refreshToken });
-}));
+var fitbitAuth = new ClientOAuth2({
+  clientId: '22852C',
+  clientSecret: '9afe2c57a50708816966d992bf8fa4f7',
+  accessTokenUri: 'https://api.fitbit.com/oauth2/token',
+  authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
+  redirectUri: 'http://www.greatcatchhelp.com/auth/fitbit/callback',
+  scopes: ['activity', 'heartrate', 'sleep', 'weight']
+})
 
 /**
  * @swagger
@@ -146,20 +145,15 @@ router.post('/user/create', async (ctx, next) => {
     }
 });
 
-router.get('/auth/fitbit', passport.authenticate('fitbit', { scope: ['activity', 'heartrate', 'sleep', 'weight']}));
-
-router.get('/auth/fitbit/callback', passport.authenticate('fitbit', {
-	successRedirect: '/auth/fitbit/success',
-	failureRedirect: '/auth/fitbit/failure'
-}));
-
-router.get('/auth/fitbit/success', (ctx, next) => {
-	console.log(ctx);
+router.get('/auth/fitbit', (ctx) => {
+    var uri = fitbitAuth.code.getUri();
+    ctx.redirect(uri);
 });
 
-router.get('/auth/fitbit/failure', (ctx, next) => {
-	console.log(ctx);
-})
+router.get('/auth/fitbit/callback', (ctx) => {
+    let user = fitbitAuth.code.getToken(ctx.originalUrl);
+    console.log(user);
+});
 
 module.exports = {
     router,
