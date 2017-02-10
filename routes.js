@@ -82,8 +82,8 @@ router.post('/login', async (ctx, next) => {
 });
 
 router.get('/user/profile', async (ctx, next) => {
-    console.log(ctx.cookies);
-    ctx.body = { auth_token: ctx.cookies.get('access_token') };
+    console.log(ctx.session);
+    ctx.body = { auth_token: ctx.session.access_token };
 });
 
 router.get('/user/:id/profile', async (ctx, next) => {
@@ -203,9 +203,9 @@ router.get('/auth/fitbit/callback', async (ctx) => {
 
         let { access_token, refresh_token, user_id } = response.data;
 
-        ctx.cookies.set('access_token', access_token);
-        ctx.cookies.set('refresh_token', refresh_token);
-        ctx.cookies.set('user_id', user_id);
+        ctx.session.access_token = access_token;
+        ctx.session.refresh_token = refresh_token;
+        ctx.session.user_id = user_id;
 
         ctx.redirect('/dashboard');
     }

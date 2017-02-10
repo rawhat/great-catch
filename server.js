@@ -10,6 +10,7 @@ const router = require('./routes.js').router;
 var convert = require('koa-convert');
 app.use(convert(require('koa-better-body')()));
 
+app.keys = SESSION_KEYS;
 app.use(convert(session(app)));
 
 var views = require('koa-views');
@@ -24,7 +25,7 @@ app.use(convert(require('koa-static')(path.join(__dirname, 'static'))));
 
 // var passport = require('koa-passport');
 // var session = require('koa-session');
-app.keys = SESSION_KEYS;
+
 // app.use(convert(session(app)));
 // app.use(passport.initialize());
 // app.use(passport.session());
