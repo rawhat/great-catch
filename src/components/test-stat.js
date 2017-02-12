@@ -9,4 +9,5 @@ var oldData = [2455, 5218, 2062, 121, 0, 0, 2236, 3437, 209, 6, 0, 0, 1862, 0, 0
 // var newData = [1911];
 var newData = [1888];
 
-test.deterResult(oldData, newData);
+var results = test.deterResult(oldData, newData);
+console.log(results);

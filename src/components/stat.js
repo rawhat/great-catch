@@ -21,17 +21,16 @@
 */
 
 // require stat package
-var stat = require("simple-statistics")
+var stat = require("simple-statistics");
 
-module.exports = {
-	/*
-		calculate mean absolute deviation
-		input:
-			yData: y axis data
-		output:
-			MAD: mean absolute deviation
-	*/
-	calcMAD: function calcMAD(yData){
+/*
+	calculate mean absolute deviation
+	input:
+		yData: y axis data
+	output:
+		MAD: mean absolute deviation
+*/
+function calcMAD(yData){
 		// get mean
 		var mean = stat.mean(yData);
 		
@@ -45,56 +44,59 @@ module.exports = {
 		}
 		// return MAD
 		return numerator/denominator;
-	},
-
-	/*
-		calculate linear regression
-		input: 
-			yData: y axis data
-		output: 
-			regrObj.m: the slow attribute of the linearRegression return object
-	*/
-	calcLinearRegr: function calcLinearRegr(yData){
-		// create x axis data
-		xData = [];
-		for (var i = 0; i < yData.length; i++){
-			xData.push(i);
-		}
-		// calc linear regression
-		var regrObj = stat.linearRegression([xData, yData]);
-		
-		// return slope
-		return regrObj.m;
-	},
-
-	/*
-		determine case
-		input: 
-			newData: today's data
-			oldData: past data
-			TODO: oldData length to be determined
-		output:
-			console log messages
-			NOTE: change to whatever as needed
-	*/
-	deterResult: function deterResult(oldData, newData){
-		// get slope of old data
-		var oldSlope = module.exports.calcLinearRegr(oldData);
-		
-		// get slope of old data + new data
-		var newSlope = module.exports.calcLinearRegr(oldData.concat(newData));
-
-		// if new slope is equal or lower than old slope
-		if (newSlope <= oldSlope){
-			// compare MAD
-			if (newData <= module.exports.calcMAD(oldData)){
-				console.log("lazy bum, go exercise!");
-				return;
-			}
-		}
-	
-		// anything else
-		console.log("good job, keep it up!");
-		return;
 	}
+
+/*
+	calculate linear regression
+	input: 
+		yData: y axis data
+	output: 
+		regrObj.m: the slow attribute of the linearRegression return object
+*/
+function calcLinearRegr(yData){
+	// create x axis data
+	var xData = [];
+	for (var i = 0; i < yData.length; i++){
+		xData.push(i);
+	}
+	// calc linear regression
+	var regrObj = stat.linearRegression([xData, yData]);
+	
+	// return slope
+	return regrObj.m;
+}
+
+/*
+	determine case
+	input: 
+		newData: today's data
+		oldData: past data
+		TODO: oldData length to be determined
+	output:
+		console log messages
+		NOTE: change to whatever as needed
+*/
+function deterResult(oldData, newData){
+	// get slope of old data
+	var oldSlope = module.exports.calcLinearRegr(oldData);
+	
+	// get slope of old data + new data
+	var newSlope = module.exports.calcLinearRegr(oldData.concat(newData));
+
+	// if new slope is equal or lower than old slope
+	if (newSlope <= oldSlope){
+		// compare MAD
+		if (newData <= module.exports.calcMAD(oldData)){
+			return("lazy bum, go exercise!");
+		}
+	}
+
+	// anything else
+	return("good job, keep it up!");
+}
+
+module.exports = {
+	calcMAD,
+	calcLinearRegr,
+	deterResult
 };
