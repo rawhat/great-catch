@@ -104,8 +104,9 @@ router.get('/user/:id/profile', async (ctx, next) => {
     // };
 
     if(!error && records.length) {
-        let userData = _.omit(records[0].get('user').properties, 'password');
-        ctx.body = userData;
+        let user_data = _.omit(records[0].get('user').properties, 'password');
+        let auth_token = ctx.session.access_token;
+        ctx.body = { user_data, auth_token };
     }
     else {
         ctx.status = 403;

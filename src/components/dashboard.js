@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { fetchUserData } from '../actions/index';
+import { fetchUserData, fetchFitbitData } from '../actions/index';
 
 class Dashboard extends Component {
     componentWillMount = () => {
@@ -15,7 +15,8 @@ class Dashboard extends Component {
         }
 
         return(
-            <h2>This is a dashboard for {this.props.userData.fullName}</h2>
+            <h2>This is a dashboard for {this.props.user_data.fullName}</h2>
+            <button className='btn'>Get FitBit Data</button>
         );
     }
 }
@@ -24,8 +25,8 @@ const mapStateToProps = (state) => {
     console.log(state);
     return {
         token: state.auth.token,
-        userData: state.userData
+        user_data: state.auth.user_data
     };
 };
 
-export default connect(mapStateToProps, { fetchUserData })(Dashboard);
+export default connect(mapStateToProps, { fetchUserData, fetchFitbitData })(Dashboard);

@@ -1,36 +1,23 @@
 var koa = require('koa');
-var koaRouter = require('koa-router');
-var koaBody = require('koa-better-body');
+var convert = require('koa-convert');
+var router = require('koa-router')();
 var { graphqlKoa, graphiqlKoa } = require('graphql-server-koa');
-var { makeExecutableSchema } = require('graphql-tools');
 
 const app = new koa();
-const router = new koaRouter();
 const PORT = 3000;
 
+var myGraphQLSchema = require('./schema').graphqlSchema;
+
+// koaBody is needed just for POST.
+// var body = convert(require('koa-better-body'));
+var koaBody = require('koa-bodyparser');
 app.use(koaBody());
 
-var typeDefs = [`
-type Query {
-  hello: String
-}
+router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
+router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
 
-schema {
-  query: Query
-}`];
+router.get('/graphiql', graphiqlKoa({ endpointURL: '/graphql' }));
 
-var resolvers = {
-  Query: {
-    hello(root) {
-      return 'world';
-    }
-  }
-};
-
-var schema = makeExecutableSchema({typeDefs, resolvers});
-
-router.get('/graphiql', graphiqlKoa({endpointURL: '/graphql'}));
-router.post('/graphql', graphqlKoa({ schema }));
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.listen(PORT);

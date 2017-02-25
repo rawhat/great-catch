@@ -65,6 +65,15 @@ export function fetchUserData(token) {
     };
 }
 
+export function fetchFitbitData({ data_set, date, period }) {
+    return (dispatch) => {
+        axios.post('/api/fitbit', { headers: { Authorization: token }})
+        .then((res) => {
+            dispatch({ type: FETCH_FITBIT_DATA, payload: res });
+        });
+    }
+}
+
 export function fetchData() {
     return (dispatch) => {
         dispatch({
