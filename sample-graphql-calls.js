@@ -101,8 +101,8 @@ async function graphQLTests() {
         name: "Advil",
         dosage: "200mg",
         frequency: "Once daily",
-        additionalInstructions: `["Limit alcohol intake"]`,
-        sideEffects: `["Stomach bleeding"]`,
+        additionalInstructions: JSON.stringify(["Limit alcohol intake"]),
+        sideEffects: JSON.stringify(["Stomach bleeding"]),
     });
     console.log('New Medicine');
     console.log(medicine.data);
