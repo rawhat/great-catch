@@ -9,16 +9,16 @@ async function doNestedQuery({ queryString, object }) {
 const resolvers = {
 	Query: {
 		async user(root, args) {
-			let { id } = args;
+			let { username } = args;
 			// return _.omit(mockData[id], 'password');
 			let { records } = await makeDBQuery({ queryString: `
-				MATCH (u:User) WHERE ID(u) = {id} RETURN u AS user;
+				MATCH (u:User) WHERE u.username = {username} RETURN u AS user, ID(u) as userId;
 			`,
 			object: {
-				id
+				username
 			}});
 
-			return Object.assign({}, _.omit(records[0].get('user').properties, 'password'), { id });
+			return Object.assign({}, _.omit(records[0].get('user').properties, 'password'), { id: records[0].get('userId').low });
 		},
 		async users() {
 			// return Object.keys(mockData).map(key => {
@@ -38,80 +38,82 @@ const resolvers = {
 	},
 	Mutation: {
 		async addMedicine(root, args) {
-			let { id, medicine } = args;
+			let { username, medicine } = args;
 
 			// let medicineId = mockData[id].medicines.length;
 
 			// mockData[id].medicines = mockData[id].medicines.concat(Object.assign({}, medicine, { id: medicineId }));
 
-			let object = Object.assign({}, medicine, { addedAt: Date.now(), id });
+			let object = Object.assign({}, medicine, { addedAt: Date.now(), username });
 
 			let { records, error } = await makeDBQuery({ queryString: `
-				MATCH (u:User) WHERE ID(u) = {id}
-				CREATE (m:Medicine { 
+				MATCH (u:User) WHERE u.username = {username}
+				CREATE (u)-[:TAKES { addedAt: {addedAt}}]->(m:Medicine { 
 					name: {name}, 
 					dosage: {dosage}, 
 					frequency: {frequency}, 
 					additionalInstructions: {additionalInstructions},
 					sideEffects: {sideEffects}
-				})-[:TAKES { addedAt: {addedAt}}]->(u)
+				})
 				RETURN m AS medicine;
-				`.replace('\n', ' '),
+				`,
 				object
 			});
+
+            console.log(records);
 
 			return records[0].get('medicine').properties;
 		},
 		async addCaretaker(root, args) {
-			let { id, caretaker } = args;
+			let { username, caretaker } = args;
 
 			// let caretakerId = mockData[id].caretakers.length;
 
 			// mockData[id].caretakers = mockData[id].caretakers.concat(Object.assign({}, caretaker, { id: caretakerId }));
 			// return caretaker;
 
-			let object = Object.assign({}, caretaker, { addedAt: Date.now(), id });
+			let object = Object.assign({}, caretaker, { addedAt: Date.now(), username });
 
 			let { records, error } = await makeDBQuery({ queryString: `
-				MATCH (u:User) WHERE ID(u) = {id}
-				CREATE (c:Caretaker { 
+				MATCH (u:User) WHERE u.username = {username}
+				CREATE (u)-[:HAS { addedAt: {addedAt}}]->(c:Caretaker { 
 					role: {role},
 					email: {email},
 					phone: {phone}
-				})-[:HAS { addedAt: {addedAt}}]->(u)
+				})
 				RETURN c AS caretaker;
-				`.replace('\n', ' '),
+				`,
 				object
 			});
 
 			return records[0].get('caretaker').properties;
 		},
 		async addAlert(root, args) {
-			let { id, alert } = args;
+			let { username, alert } = args;
 
 			// let alertId = mockData[id].alerts.length;
 
 			// mockData[id].alerts = mockData[id].alerts.concat(Object.assign({}, alert, { id: alertId }));
 			// return alert;
 
-			let object = Object.assign({}, alert, { triggeredAt: Date.now(), id });
+			let object = Object.assign({}, alert, { triggeredAt: Date.now(), username });
 
 			let { records, error } = await makeDBQuery({ queryString: `
-				MATCH (u:User) WHERE ID(u) = {id}
-				CREATE (a:Alert { 
+				MATCH (u:User) WHERE u.username = username
+				CREATE (u)-[:TRIGGERED { triggeredAt: {triggeredAt}}]->(a:Alert { 
 					type: {type},
 					priority: {priority},
 					method: {method}
-				})-[:TRIGGERED { triggeredAt: {triggeredAt}}]->(u)
+				})
 				RETURN a AS alert;
-				`.replace('\n', ' '),
+				`,
 				object
 			});
 
 			return records[0].get('alert').properties;
 		},
 		async addSupportRequest(root, args) {
-			let { id, supportRequest } = args;
+			let { username, supportRequest } = args;
 
 			// let requestId = mockData[id].supportRequests.length;
 
@@ -121,17 +123,17 @@ const resolvers = {
 
 			// return supportRequest;
 
-			let object = Object.assign({}, supportRequest, { createdAt: Date.now(), id });
+			let object = Object.assign({}, supportRequest, { createdAt: Date.now(), username });
 
 			let { records, error } = await makeDBQuery({ queryString: `
-				MATCH (u:User) WHERE ID(u) = {id}
-				CREATE (s:SupportRequest { 
+				MATCH (u:User) WHERE u.username = {username}
+				CREATE (u)-[:MADE { createdAt: {createdAt}}]->(s:SupportRequest { 
 					email: {email},
 					role: {role},
 					status: {status}
-				})-[:HAS { createdAt: {createdAt}}]->(u)
+				})
 				RETURN s AS supportRequest;
-				`.replace('\n', ' '),
+				`,
 				object
 			});
 
@@ -140,15 +142,15 @@ const resolvers = {
 	},
 	User: {
 		async caretakers(obj) {
-			let { id } = obj;
+			let { username } = obj;
 
 			let { records, error } = await doNestedQuery({
 				queryString: `
 					MATCH (u:User)-[:HAS]-(c:Caretaker)
-					WHERE ID(u) = {id}
+					WHERE u.username = {username}
 					RETURN c AS caretaker, ID(c) as caretakerId;
 				`,
-				object: { id }
+				object: { username }
 			});
 
 			if(records.length)
@@ -159,15 +161,15 @@ const resolvers = {
 				return [];
 		},
 		async supportRequests(obj) {
-			let { id } = obj;
+			let { username } = obj;
 
 			let { records, error } = await doNestedQuery({
 				queryString: `
 					MATCH (u:User)-[:MADE]-(s:SupportRequest)
-					WHERE ID(u) = {id}
+					WHERE u.username = {username}
 					RETURN s as supportRequest, ID(s) as supportRequestId;
 				`,
-				object: { id }
+				object: { username }
 			});
 
 			if(records.length)
@@ -178,15 +180,15 @@ const resolvers = {
 				return [];
 		},
 		async medicines(obj) {
-			let { id } = obj;
+			let { username } = obj;
 
 			let { records, error } = await doNestedQuery({
 				queryString: `
 					MATCH (u:User)-[:TAKES]-(m:Medicine)
-					WHERE ID(u) = {id}
+					WHERE u.username = {username}
 					RETURN m as medicine, ID(m) as medicineId;
 				`,
-				object: { id }
+				object: { username }
 			});
 
 			if(records.length){
@@ -198,15 +200,15 @@ const resolvers = {
 				return [];
 		},
 		async alerts(obj) {
-			let { id } = obj;
+			let { username } = obj;
 
 			let { records, error } = await doNestedQuery({
 				queryString: `
 					MATCH (u:User)-[:TRIGGERED]-(a:Alert)
-					WHERE ID(u) = {id}
+					WHERE u.username = {username}
 					RETURN a as alert, ID(a) as alertId;
 				`,
-				object: { id }
+				object: { username }
 			});
 
 			if(records.length)

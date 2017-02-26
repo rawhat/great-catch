@@ -82,15 +82,15 @@ const schema = `
 	}
 
 	type Query {
-		user(id: Int!): User
+		user(username: String!): User
 		users: [User]
 	}
 
 	type Mutation {
-		addMedicine(id: Int!, medicine: InputMedicine!): UserMedicine
-		addCaretaker(id: Int!, caretaker: InputCaretaker!): UserCaretaker
-		addAlert(id: Int!, alert: InputAlert!): Alert
-		addSupportRequest(id: Int!, supportRequest: InputSupportRequest!): UserSupportRequest
+		addMedicine(username: String!, medicine: InputMedicine!): UserMedicine
+		addCaretaker(username: String!, caretaker: InputCaretaker!): UserCaretaker
+		addAlert(username: String!, alert: InputAlert!): Alert
+		addSupportRequest(username: String!, supportRequest: InputSupportRequest!): UserSupportRequest
 	}
 `;
 
