@@ -6,7 +6,7 @@ var { graphqlKoa, graphiqlKoa } = require('graphql-server-koa');
 const app = new koa();
 const PORT = 3000;
 
-var myGraphQLSchema = require('./schema').graphqlSchema;
+var myGraphQLSchema = require('./src/graphql/schema').graphqlSchema;
 
 // koaBody is needed just for POST.
 // app.use(convert(require('koa-better-body')()));
