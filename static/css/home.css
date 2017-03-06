@@ -1,0 +1,108 @@
+@charset "utf-8";
+/* CSS Document */
+
+#header{
+	height:70px;	
+	width:auto;
+	/*border:#000000 1px solid;*/
+}
+#logo{
+margin-left:100px;
+margin-top:20px;
+height:34px;
+width:253px;
+
+}
+#main{
+background-image:url(../pics/background_pic.jpg);
+height:1000px;
+width:auto;
+/*border:#000000 thin solid;*/
+background-size: 100%;
+background-repeat: no-repeat;
+/*background-attachment: fixed;*/
+}
+#navi{
+float:right;
+margin-right:100px;
+margin-top:30px;
+}
+
+ul,li { list-style-type: none;
+        list-style-position:inside;
+        margin:0;
+        padding:0;
+		}
+		
+a.signIn:link    {color: red;; background-color:transparent; text-decoration:none}
+a.signIn:visited {color: #00CCFF; background-color:transparent; text-decoration:none}
+a.signIn:hover   {color: blue; background-color:transparent; text-decoration:none}
+
+
+
+
+.signIn{
+font-size:20px;
+font-weight: bold;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+#footer {
+    padding: 1em;
+    color: black;
+    background-color: #FFFFFF;
+    clear: left;
+    text-align: center;
+}
+#slogon{
+width:350px;
+height:400px;
+padding-top:100px;
+padding-left:20px;
+float:left;
+}
+#slogon h1{
+font-family: Arial, Helvetica, sans-serif;
+font-size:36px;
+font-style:oblique;
+color:#FFFFFF;
+}
+
+#signUn_box{
+
+background: white;
+box-shadow: 0px 2px 0px rgba(0,0,0,0.15);
+margin-top:20px;
+margin-right:20px;
+float:right;
+width:360px;
+border-radius: 10px;
+
+}
+#signUn_box_top{
+background-color:#006699;
+padding:15px;
+border-radius: 10px 10px 0 0;
+}
+
+#signUn_box p{
+color:#FFFFFF;
+text-align:center;
+font-weight:500;
+list-hight:1.6;
+font-size:16px;
+font-family: Arial, Helvetica, sans-serif;
+font-weight:bold;
+}
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+#signUp_form{
+padding:15px;
+}	
