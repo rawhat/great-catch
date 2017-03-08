@@ -15,8 +15,10 @@ class Dashboard extends Component {
         }
 
         return(
-            <h2>This is a dashboard for {this.props.user_data.fullName}</h2>
-            <button className='btn'>Get FitBit Data</button>
+            <div>
+                <h2>This is a dashboard for {this.props.user_data.fullName}</h2>
+                <button className='btn'>Get FitBit Data</button>
+            </div>
         );
     }
 }
