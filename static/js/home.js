@@ -8,8 +8,13 @@ $(document).ready(function(){
 		var passWord = $('[name="pw"]').val();
 		
 		$.post(
-			"http://localhost:3000/graphql",
-			'<some query>',
+			"http://localhost:3000/user/create",
+			{ 
+				username: firstName+lastName,
+				email,
+				password: passWord,
+				password_repeat: passWord	
+			},
 			function(response){
 				if (response.errors){
 					console.log("error");
