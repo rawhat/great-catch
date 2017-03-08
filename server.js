@@ -52,9 +52,9 @@ let users = [
 
 // app.use(convert(jwt({ secret: SESSION_KEYS[0], passthrough: true }).unless({ path: ['/', '/login']})));
 
-router.get('*', async (ctx) => {
-    this.body = await ctx.render('index.pug');
-});
+// router.get('*', async (ctx) => {
+//     this.body = await ctx.render('index.pug');
+// });
 
 app.use(router.routes());
 app.use(router.allowedMethods());
