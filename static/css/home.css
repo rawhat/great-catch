@@ -14,7 +14,7 @@ width:253px;
 
 }
 #main{
-background-image:url(../pics/background_pic.jpg);
+background-image:url(/img/background_pic.jpg);
 height:1000px;
 width:auto;
 /*border:#000000 thin solid;*/
