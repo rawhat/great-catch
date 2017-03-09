@@ -6,7 +6,7 @@ $(document).ready(function(){
 		var userName = $('[name="username"]').val();
 		var passWord = $('[name="pw"]').val();
 
-		// send a post to /user/create endpoint
+		// send a post to /login endpoint
 		$.post(
 			// url
 			"/login",
@@ -21,10 +21,10 @@ $(document).ready(function(){
 				if (status == "success"){
 					// token manage
 					sessionStorage.setItem("sessionToken", data.token);
-					console.log(sessionStorage.getItem("sessionToken"));
+					//console.log(sessionStorage.getItem("sessionToken"));
 					
 					// redirect to profile page
-					//window.location.href = "/html/profile.html"
+					window.location.href = "/html/profile.html"
 				}else{
 					alert("Failed");
 				}
