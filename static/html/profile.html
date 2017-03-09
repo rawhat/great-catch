@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Great Catch</title>
 <link href="/css/home.css" rel="stylesheet" type="text/css"/>
+<link href="/css/profile.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="/js/profile.js"></script>
 </head>
@@ -17,11 +18,52 @@
             	<a href="/html/home.html" class="signIn">Sign Out</a>
             </div>
         </div>
-		
+	
+   <!-- This is profile body-->
+   
         <div id="profileBody">
+        	<div id="banner">
+            	<h2>Welcome, <span id="userName">User name!</span></h2>
+            </div>
+            
+           <table id="infoTable">
+           		<tr>
+                	<th>First Name:</th>
+                    <th id="firstName"></th>
+                </tr>
+                <tr>
+                	<th>Last Name:</th>
+                    <th id="lastName"></th>
+                </tr>
+                <tr>
+                	<th>Email Address:</th>
+                    <th id="eAddress"></th>
+                </tr>
+           </table>
+            
+            <div id="userInput">
+               	<select  name="fitbit_dataType">
+                    <option value="heart_rate">Heart Rate</option>
+                    <option value="calories">Calories</option>
+                    <option value="steps">Steps</option>
+                    <option value="distance">Distance</option>
+             	</select>
+              
+               	<select name="range">
+                    <option value="5_min">5 minutes</option>
+                    <option value="30_min">30 minutes</option>
+                    <option value="6_h">6 hours</option>
+                    <option value="1_d">1 day</option>
+                    <option value="15_d">15 day</option>
+             	</select>
         	
-        
-        
+        		<input type="date" name="selected_date">
+                
+                <button id="request_fitbit_data" type="button" >Submit</button>
+        	</div>
+            
+            <canvas id="myChart" width="400" height="400"></canvas>
+            
         
         </div>
         	

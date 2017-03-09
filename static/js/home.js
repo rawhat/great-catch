@@ -25,6 +25,8 @@ $(document).ready(function(){
 				if (status == "success"){
 					// token manage
 					sessionStorage.setItem("sessionToken", data.token);
+					sessionStorage.setItem("userName", data.username);
+					sessionStorage.setItem("email", data.email);
 					//console.log(sessionStorage.getItem("sessionToken"));
 					
 					// redirect to profile page

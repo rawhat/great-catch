@@ -72,7 +72,7 @@ router.post('/login', async (ctx, next) => {
         // let user = users.find(u => u.name === ctx.request.fields.username);
         //                                                 // seconds
         let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
-        ctx.body = { token, username: user.username };
+        ctx.body = { token, username: user.username, email: user.email };
         ctx.status = 200;
     }
     // extend this to check for specific errors
