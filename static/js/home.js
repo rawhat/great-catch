@@ -26,7 +26,10 @@ $(document).ready(function(){
 					alert("Success");
 					// token manage
 					sessionStorage.setItem("sessionToken", data.token);
-					console.log(sessionStorage.getItem("sessionToken"));
+					//console.log(sessionStorage.getItem("sessionToken"));
+					
+					// redirect to profile page
+					window.location.href = "/html/profile.html"
 				}else{
 					alert("Failed");
 				}
