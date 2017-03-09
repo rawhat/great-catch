@@ -23,7 +23,6 @@ $(document).ready(function(){
 			function(data, status){
 				// TODO: exact function to be implemented
 				if (status == "success"){
-					alert("Success");
 					// token manage
 					sessionStorage.setItem("sessionToken", data.token);
 					//console.log(sessionStorage.getItem("sessionToken"));
