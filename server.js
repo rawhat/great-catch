@@ -308,7 +308,10 @@ router.post('/api/fitbit', async (ctx) => {
         ctx.body = response;
     }
     catch(e) {
-        ctx.body = e;
+        if(e.response)
+            ctx.body = e.reponse;
+        else
+            ctx.body = e.message;
     }
 });
 
