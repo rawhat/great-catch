@@ -301,9 +301,15 @@ router.post('/api/fitbit', async (ctx) => {
     let requestObject = axios.create({
         headers
     });
-
-    let response = await requestObject.get(url);
-    console.log(response);
+    
+    try {
+        let response = await requestObject.get(url);
+        console.log(response);
+        ctx.body = response;
+    }
+    catch(e) {
+        ctx.body = e;
+    }
 });
 
 router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
