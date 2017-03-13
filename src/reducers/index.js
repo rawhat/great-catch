@@ -10,5 +10,5 @@ export default combineReducers({
     userData: userDataReducer,
     auth: loginReducer,
     form: formReducer,
-    fitbitData
+    // fitbitData
 });

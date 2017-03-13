@@ -10,7 +10,7 @@ import {
     FETCH_USER_DATA
 } from './types';
 
-let SERVER_URL = 'http://www.greatcatchhelp.com';
+let SERVER_URL = 'http://localhost:3000';
 if(process.env.NODE_ENV == 'production') SERVER_URL = 'http://www.greatcatchhelp.com';
 
 export function loginUser(formData) {
@@ -58,7 +58,7 @@ export function createUser(formData) {
 
 export function fetchUserData(token) {
     return (dispatch) => {
-        axios.get('/user/profile', { headers: { Authorization: token }})
+        axios.get('/user/profile', { headers: { Authorization:`Bearer ${token}` }})
         .then((res) => {
             dispatch({ type: FETCH_USER_DATA, payload: res });
         });
@@ -67,7 +67,7 @@ export function fetchUserData(token) {
 
 export function fetchFitbitData({ data_set, date, period }) {
     return (dispatch) => {
-        axios.post('/api/fitbit', { headers: { Authorization: token }})
+        axios.post('/api/fitbit', { headers: { Authorization: `Bearer ${token}` }})
         .then((res) => {
             dispatch({ type: FETCH_FITBIT_DATA, payload: res });
         });

@@ -1,5 +1,15 @@
 // functions
 $(document).ready(function(){
+	$.ajax('/api/fitbit/test', {
+		beforeSend: (xhr) => {
+			xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('sessionToken')}`)
+		}
+	})
+	.then((response) => {
+		if(JSON.parse(response))
+			$('#fitbit-auth-link').remove();
+	});
+
 	var email = sessionStorage.getItem('email');
 	var username = sessionStorage.getItem('userName');
 	
@@ -15,14 +25,16 @@ $(document).ready(function(){
 		var range = $('[name="range"] option:selected').val()
 		var startDate = $('[name="selected_date"]').val()
 
-		$.post(
-			// url
-			"/api/fitbit",
-			// data
-			{ 
+		$.ajax({
+			type: "POST",
+			url: "/api/fitbit",
+			data: { 
 				data_set: dataType,
 				date: startDate,
 				period: range	
+			},
+			beforeSend: (xhr) => {
+				xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('sessionToken')}`)
 			},
 			// function after data received
 			function(data, status){
@@ -33,7 +45,6 @@ $(document).ready(function(){
 					alert("Failed");
 				}
 			}
-			
-		)
+		});
 	});
-})
+});
