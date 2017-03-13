@@ -293,7 +293,7 @@ router.post('/api/fitbit', async (ctx) => {
     //         break;
     //     }
     // }
-    let url = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/30d.json';
+    let url = 'https://api.fitbit.com/1/user/-/activities/steps/date/today/1m.json';
 
     let headers = {
         Authorization: `Bearer ${ctx.session.access_token}`
