@@ -286,13 +286,14 @@ router.post('/api/fitbit', async (ctx) => {
     console.log(ctx.session.access_token);
     let { data_set, date = 'today', period = '1y' } = ctx.request.body;
 
-    let url = 'https://api.fitbit.com/1/user/-';
-    switch(data_set) {
-        case 'heart_rate': {
-            url += `/activities/heart/date/${date}/${period}.json`;
-            break;
-        }
-    }
+    // let url = 'https://api.fitbit.com/1/user/-';
+    // switch(data_set) {
+    //     case 'heart_rate': {
+    //         url += `/activities/heart/date/${date}/${period}.json`;
+    //         break;
+    //     }
+    // }
+    let url = 'https://api.fitbit.com/1/user/-/activities/steps/date/today/1m.json';
 
     let headers = {
         Authorization: `Bearer ${ctx.session.access_token}`
