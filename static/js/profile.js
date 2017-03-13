@@ -1,5 +1,7 @@
 // functions
 $(document).ready(function(){
+	var chart = $('#myChart');
+
 	$.ajax('/api/fitbit/test', {
 		beforeSend: (xhr) => {
 			xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('sessionToken')}`)
@@ -35,16 +37,24 @@ $(document).ready(function(){
 			},
 			beforeSend: (xhr) => {
 				xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('sessionToken')}`)
-			},
-			// function after data received
-			function(data, status){
-				// TODO: exact function to be implemented
-				if (status == "success"){
-					console.log("do something");
-				}else{
-					alert("Failed");
-				}
 			}
+		})
+		.done((data) => {
+			var chartData = data['activities-steps'];
+			var scatterChart = new Chart(chart, {
+				type: 'bar',
+				data: {
+					labels: chartData.map(point => point.dateTime),
+					datasets: [{
+						label: 'Activities: Steps',
+						data: chartData.map(point => point.value)
+					}]
+				}
+			});
+		})
+		.fail((e) => {
+			console.error('Oh no!');
+			console.error(e);
 		});
 	});
 });
