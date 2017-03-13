@@ -283,7 +283,7 @@ router.get('/auth/fitbit', (ctx) => {
 });
 
 router.post('/api/fitbit', async (ctx) => {
-    console.log(ctx.session.auth_token);
+    console.log(ctx.session.access_token);
     let { data_set, date = 'today', period = '1y' } = ctx.request.body;
 
     let url = 'https://api.fitbit.com/1/user/-';
@@ -296,7 +296,7 @@ router.post('/api/fitbit', async (ctx) => {
 
     let headers = {
         // Authentication: `Basic ${encodeClientStrings()}`
-        Authentication: `Bearer ${ctx.session.auth_token}`
+        Authentication: `Bearer ${ctx.session.access_token}`
     };
 
     let requestObject = axios.create({
@@ -311,10 +311,6 @@ router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
 router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
 
 router.get('/graphiql', graphiqlKoa({ endpointURL: '/graphql' }));
-
-router.get('*', async (ctx) => {
-  await ctx.render('index.pug');
-});
 
 module.exports = {
     router
