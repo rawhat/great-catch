@@ -295,8 +295,7 @@ router.post('/api/fitbit', async (ctx) => {
     }
 
     let headers = {
-        // Authentication: `Basic ${encodeClientStrings()}`
-        Authentication: `Bearer ${ctx.session.access_token}`
+        Authorization: `Bearer ${ctx.session.access_token}`
     };
 
     let requestObject = axios.create({
