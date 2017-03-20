@@ -73,6 +73,10 @@ export default class Dashboard extends Component {
                     label: 'Activities: Steps',
                     data: chartData.map(point => point.value)
                 }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
     }
