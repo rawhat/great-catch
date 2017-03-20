@@ -20,36 +20,16 @@ var ClientOAuth2 = require('client-oauth2');
 
 let encodeClientStrings = () => {
     return Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
-}
+};
 
-/**
- * @swagger
- * /login:
- *      post:
- *          description: Login user to application
- *          produces:
- *              - application/json
- *          parameters:
- *              - name: username
- *                description:  Username provided by user
- *                in: formData
- *                required: true
- *                type: string
- *              - name: password
- *                description:  Password provided by user
- *                in: formData
- *                required: true
- *                type: string
- *          responses:
- *              200:
- *                  description: login
- *              401:
- *                  description: invalid credentials
- */
+var { graphqlKoa, graphiqlKoa } = require('graphql-server-koa');
+
+var myGraphQLSchema = require('./src/graphql/schema').graphqlSchema;
+
 router.post('/login', async (ctx, next) => {
-    console.log(ctx.request.fields);
+    console.log(ctx.request.body);
 
-    let { username, password } = ctx.request.fields;
+    let { username, password } = ctx.request.body;
 
     // fields:
     //  { username, password }
@@ -79,94 +59,6 @@ router.post('/login', async (ctx, next) => {
     else {
         ctx.status = 401;
     }
-});
-
-router.get('/user/profile', async (ctx, next) => {
-    console.log(ctx.session);
-    ctx.body = { auth_token: ctx.session.access_token };
-});
-
-router.get('/user/:id/profile', async (ctx, next) => {
-    // GET USER DATA FROM DB HERE
-    let { id } = ctx.params;
-
-    let { records, error } = await makeDBQuery({
-        queryString: 'MATCH (u:User) WHERE id(u) = {id} RETURN u AS user',
-        object: {
-            id: parseInt(id)
-        }
-    });
-
-    // let userData = {
-    //     username: 'test',
-    //     dateOfBirth: '01/01/1980',
-    //     fullName: 'Test User'
-    // };
-
-    if(!error && records.length) {
-        let user_data = _.omit(records[0].get('user').properties, 'password');
-        let auth_token = ctx.session.access_token;
-        ctx.body = { user_data, auth_token };
-    }
-    else {
-        ctx.status = 403;
-    }
-});
-
-router.post('/user/create', async (ctx, next) => {
-    let { username, password, password_repeat, email } = ctx.request.fields;
-
-    // fields:
-    //  { username, password, password_repeat, email }  -- any more?
-
-    // CREATE USER IN DB, THEN USE IT TO SIGN JWT INSTEAD
-
-    if(password === password_repeat) {
-
-        let { records, error } = await makeDBQuery({ 
-            queryString: 'CREATE (u:User { username: {username}, password: {password}, email: {email}}) RETURN u AS user', 
-            object: {
-                username,
-                password,
-                email
-            }
-        });
-
-        if(!error) {
-            let user = _.omit(records[0].get('user').properties, password);
-            // let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
-            // users = users.concat(user);
-
-            let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
-
-            // ctx.body = { token };
-            console.log('user', user);
-            ctx.body = Object.assign(_.omit(user, 'password'), { token });
-            ctx.status = 203;
-        }
-        else {
-            console.error(error);
-        }
-    }
-    else {
-        ctx.status = 401;
-    }
-});
-
-router.get('/auth/fitbit', (ctx) => {
-    let { username } = ctx.query;
-
-    var fitbitAuth = new ClientOAuth2({
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        accessTokenUri: 'https://api.fitbit.com/oauth2/token',
-        authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
-        redirectUri: REDIRECT_URI,
-        scopes: ['activity', 'heartrate', 'sleep', 'weight']
-    });
-
-    var uri = fitbitAuth.code.getUri();
-    ctx.redirect(uri);
 });
 
 const fitbitTokenUrl = 'https://api.fitbit.com/oauth2/token';
@@ -208,7 +100,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         ctx.session.refresh_token = refresh_token;
         ctx.session.user_id = user_id;
 
-        ctx.redirect('/dashboard');
+        ctx.redirect('/html/profile.html');
     }
     catch (error) {
         if (error.response) {
@@ -226,7 +118,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
 });
 
 router.post('/auth/fitbit/refresh', async (ctx) => {
-    let { refresh_token } = ctx.request.fields;
+    let { refresh_token } = ctx.request.body;
 
      let headers = {
         Authorization: `Basic ${encodeClientStrings()}`
@@ -262,8 +154,108 @@ router.post('/auth/fitbit/refresh', async (ctx) => {
     }
 });
 
-router.post('/api/fitbit', async (ctx) => {
-    let { data_set, date = 'today', period = '1y', access_token } = ctx.request.fields;
+router.post('/user/create', async (ctx, next) => {
+    let { username, password, password_repeat, email } = ctx.request.body;
+
+    // fields:
+    //  { username, password, password_repeat, email }  -- any more?
+
+    // CREATE USER IN DB, THEN USE IT TO SIGN JWT INSTEAD
+
+    if(password === password_repeat) {
+
+        let { records, error } = await makeDBQuery({ 
+            queryString: 'CREATE (u:User { username: {username}, password: {password}, email: {email}}) RETURN u AS user', 
+            object: {
+                username,
+                password,
+                email
+            }
+        });
+
+        if(!error) {
+            let user = _.omit(records[0].get('user').properties, password);
+            // let user = Object.assign({}, ctx.request.fields, { id: users.length + 1 });
+            // users = users.concat(user);
+
+            let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
+
+            // ctx.body = { token };
+            console.log('user', user);
+            ctx.body = Object.assign(_.omit(user, 'password'), { token });
+            ctx.status = 203;
+        }
+        else {
+            console.error(error);
+        }
+    }
+    else {
+        ctx.status = 401;
+    }
+});
+
+app.use(jwt);
+
+router.get('/user/profile', jwt, async (ctx, next) => {
+    console.log(ctx.session);
+    ctx.body = { auth_token: ctx.session.access_token };
+});
+
+router.get('/user/:id/profile', jwt, async (ctx, next) => {
+    // GET USER DATA FROM DB HERE
+    let { id } = ctx.params;
+
+    let { records, error } = await makeDBQuery({
+        queryString: 'MATCH (u:User) WHERE id(u) = {id} RETURN u AS user',
+        object: {
+            id: parseInt(id)
+        }
+    });
+
+    // let userData = {
+    //     username: 'test',
+    //     dateOfBirth: '01/01/1980',
+    //     fullName: 'Test User'
+    // };
+
+    if(!error && records.length) {
+        let user_data = _.omit(records[0].get('user').properties, 'password');
+        let auth_token = ctx.session.access_token;
+        ctx.body = { user_data, auth_token };
+    }
+    else {
+        ctx.status = 403;
+    }
+});
+
+router.get('/api/fitbit/test', jwt, async (ctx) => {
+    console.log('in here');
+    if(ctx.session.access_token) {
+        ctx.status = 200;
+    }
+    else {
+        ctx.status = 401;
+    }
+});
+
+router.get('/auth/fitbit', jwt, (ctx) => {
+    // let { username } = ctx.query;
+
+    var fitbitAuth = new ClientOAuth2({
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        accessTokenUri: 'https://api.fitbit.com/oauth2/token',
+        authorizationUri: 'https://www.fitbit.com/oauth2/authorize',
+        redirectUri: REDIRECT_URI,
+        scopes: ['activity', 'heartrate', 'sleep', 'weight']
+    });
+
+    var uri = fitbitAuth.code.getUri();
+    ctx.redirect(uri);
+});
+
+router.post('/api/fitbit', jwt, async (ctx) => {
+    let { data_set, date = 'today', period = '1y', access_token } = ctx.request.body;
 
     let url = 'https://api.fitbit.com/1/user/-';
     switch(data_set) {
@@ -283,7 +275,12 @@ router.post('/api/fitbit', async (ctx) => {
 
     let response = await requestObject.get(url);
     console.log(response);
-})
+});
+
+router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
+router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
+
+router.get('/graphiql', graphiqlKoa({ endpointURL: '/graphql' }));
 
 module.exports = {
     router

@@ -1,60 +1,61 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form';
-import { Link } from 'react-router';
+import { withRouter } from 'react-router';
+import axios from 'axios';
 
-import { loginUser, fetchData } from '../actions/index';
-import renderField from './render-field';
 
 class Login extends Component {
-    static contextTypes = {
-        router: React.PropTypes.object
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null
+        };
     }
 
-    onSubmit = (props) => {
-        console.log('attempting login');
-        this.props.loginUser(props);
-    }
+    login = async () => {
+        try {
+            let response = await axios.post('/login', {
+                username: this.usernameInput.value,
+                password: this.passwordInput.value
+            });
 
-    componentWillReceiveProps = (nextProps) => {
-        console.log(nextProps);
-        if(nextProps.token) {
-            sessionStorage.setItem('jwt', nextProps.token);
-            this.context.router.push('/dashboard');
+            let { email, token, username } = response.data;
+
+            sessionStorage.setItem('email', email);
+            sessionStorage.setItem('token', token);
+            sessionStorage.setItem('username', username);
+
+            this.props.router.push('/dashboard');
+        }
+        catch(e) {
+            this.setState((state) => {
+                return {
+                    ...state,
+                    error: 'Invalid username or password.'
+                };
+            });
         }
     }
 
     render = () => {
-        const { handleSubmit } = this.props;
-
         return (
-            <div className="login-area">
-                <form onSubmit={handleSubmit(this.onSubmit)}>
-                    <Field name='username' labelText='Username' type='text' component={renderField} />
-                    <Field name='password' labelText='Password' type='password' component={renderField} />
-                    <button type='submit' className="btn btn-primary">Login</button>
-                    <Link to='/' className="btn btn-danger">Cancel</Link>
-                </form>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Username </th>
+                        <th>Password </th>
+                    </tr>
+                    <tr>
+                        <th><input style={{ margin: '10px 0px' }} type="text" ref={(username) => this.usernameInput = username} /></th>
+                        <th><input type="password" ref={(password) => this.passwordInput = password} /> </th>
+                    </tr>
+                    <tr>
+                        <th colSpan="2"> <input type="submit" value="Log In" onClick={this.login} /> </th>
+                    </tr>
+                    {this.state.error ? <tr><td>{this.state.error}</td></tr> : null}
+                </tbody>
+            </table>
         );
     }
 }
 
-const validate = () => {
-    return {};
-};
-
-const LoginComponent = reduxForm({
-    form: 'Login',
-    validate,
-    fields: [ 'username', 'password' ]
-})(Login);
-
-const mapStateToProps = (state) => {
-    return {
-        data: state.data,
-        token: state.auth.token
-    };
-};
-
-export default connect(mapStateToProps, { loginUser, fetchData })(LoginComponent);
+export default withRouter(Login);

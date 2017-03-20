@@ -50,8 +50,10 @@ var myGraphQLSchema = require('./src/graphql/schema').graphqlSchema;
 
 app.use(convert(jwt.unless({ 
   path: [
+    /^\/$/,
     /^\/auth\/fitbit$/,
     /^\/login$/,
+    /^\/signup$/,
     /^\/user\/create$/,
     /^\/auth\/fitbit\/callback$/,
   ]
@@ -131,7 +133,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         ctx.session.refresh_token = refresh_token;
         ctx.session.user_id = user_id;
 
-        ctx.redirect('/html/profile.html');
+        ctx.redirect('/dashboard');
     }
     catch (error) {
         if (error.response) {
@@ -322,6 +324,10 @@ router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
 router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
 
 router.get('/graphiql', graphiqlKoa({ endpointURL: '/graphql' }));
+
+router.get('*', async (ctx) => {
+    await ctx.render('index.pug');
+});
 
 module.exports = {
     router

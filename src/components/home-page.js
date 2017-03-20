@@ -1,12 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router';
 
-export default function() {
+const HomePage = () => {
     return (
-        <div style={{ textAlign: 'center' }}>
-            <h1>The Great Catch</h1>
-            <Link to='/login' className='btn btn-success'>Login</Link>
-            <Link to='/signup' className="btn btn-primary">Signup</Link>
+        <div id="container">
+            <div id="header"> 
+                <img id="logo" src="/img/logo.png"/> 
+                <div id="navi">
+                    <a href="/login">Log In</a>
+                    <a href='/signup'>Sign In</a>
+                </div>
+            </div>
+            <div id="main">
+                <div id="slogon">
+                    <h1>Develop a professional way to monitor your health. </h1>
+                </div>
+            </div>
+            <div id="footer">
+                Copyright &copy; GreatCatch.com
+            </div>
         </div>
     );
-}
+};
+
+export default HomePage;

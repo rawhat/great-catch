@@ -1,24 +1,19 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import { Router, browserHistory } from 'react-router';
-import thunk from 'redux-thunk';
+import { Router, Route, browserHistory } from 'react-router';
 
-import reducers from './reducers/index';
-import routes from './routes';
+import HomePage from './components/home-page';
+import Login from './components/login';
+import SignUp from './components/signup';
+import Dashboard from './components/dashboard';
 
 // const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
-const store = createStore(
-  reducers,
-  applyMiddleware(thunk)
-);
-
 render(
-    <Provider store={store}>
         <Router history={browserHistory}>
-            {routes}
+            <Route path='/' component={HomePage} />
+            <Route path='/login' component={Login} />
+            <Route path='/signup' component={SignUp} />
+            <Route path='/dashboard' component={Dashboard} />
         </Router>
-    </Provider>
 , document.querySelector('#app'));
