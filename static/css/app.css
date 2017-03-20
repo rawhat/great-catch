@@ -51,11 +51,6 @@ g > path:hover {
 
 .chart-container {
     text-align: center;
+    height: 600px;
     width: 100%;
-    height: auto;
-}
-
-.profile-chart {
-    max-height: 600px;
-    max-width: auto;
 }

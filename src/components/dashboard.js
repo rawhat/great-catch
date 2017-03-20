@@ -137,7 +137,9 @@ export default class Dashboard extends Component {
                 </div>
                 
                 <div className='chart-container'>
-                    <canvas className='profile-chart' width="400" height="400" ref={(chart) => this.chart = chart}></canvas>
+                    <div>
+                        <canvas className='profile-chart' width="400" height="400" ref={(chart) => this.chart = chart}></canvas>
+                    </div>
                 </div>
                 </div>
                 <div id="footer">
