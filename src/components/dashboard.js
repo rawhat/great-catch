@@ -60,12 +60,12 @@ export default class Dashboard extends Component {
             selectedDate
         }, { headers: this.headerObject() });
 
-        console.log(response);
+        this.drawChart(response.data);
     }
 
     drawChart = (data) => {
         var chartData = data['activities-steps'];
-        var scatterChart = new Chart(chart, {
+        this.barChart = new Chart(this.chart, {
             type: 'bar',
             data: {
                 labels: chartData.map(point => point.dateTime),
