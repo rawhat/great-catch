@@ -133,7 +133,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
         ctx.session.refresh_token = refresh_token;
         ctx.session.user_id = user_id;
 
-        ctx.redirect('/dashboard');
+        ctx.redirect('/');
     }
     catch (error) {
         if (error.response) {
