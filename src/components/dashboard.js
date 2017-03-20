@@ -96,7 +96,7 @@ class Dashboard extends Component {
                 <div id="header"> 
                     <img id="logo" src="/img/logo.png"/> 
                     <div id="navi">
-                        <a href="#" onClick={this.signOut}>Sign Out</a>
+                        <a href="#" className='btn btn-warning' onClick={this.signOut}>Sign Out</a>
                     </div>
                 </div>
         
