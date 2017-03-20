@@ -39,12 +39,12 @@ export default class Dashboard extends Component {
 
     getAccessToken = async () => {
         let response = await axios.get('/user/profile', { headers: this.headerObject() });
-        let { access_token } = response;
+        let { auth_token } = response.data;
 
         this.setState((state) => {
             return {
                 ...state,
-                access_token
+                access_token: auth_token
             };
         });
     }
