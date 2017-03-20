@@ -16,8 +16,12 @@ class HomePage extends Component {
                 <div id="header"> 
                     <img id="logo" src="/img/logo.png"/> 
                     <div id="navi">
-                        <a href="/login">Log In</a>
-                        <a href='/signup'>Sign In</a>
+                        <a className='btn btn-primary' href="/login">
+                            Log In
+                        </a>
+                        <a className='btn btn-danger' href='/signup'>
+                            Sign In
+                        </a>
                     </div>
                 </div>
                 <div id="main">

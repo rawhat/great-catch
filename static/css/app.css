@@ -1,5 +1,5 @@
-a:visited {
-    color: #1976D2;
+body {
+    font-family: 'Roboto', sans-serif !important;
 }
 
 .button {
@@ -18,6 +18,23 @@ a:visited {
     height: 300px;
     text-align: center;
     border: 1px solid #757575;
+}
+
+.login-well {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.login-well > a {
+    margin-top: 15px;
+}
+
+.signup-well {
+    text-align: center;
+}
+
+.signup-well > a {
+    margin-top: 15px;
 }
 
 /* D3 STUFF */
@@ -58,4 +75,8 @@ g > path:hover {
 .profile-chart {
     height: 600px !important;
     width: 100% !important;
+}
+
+#navi > a {
+    margin: 2px;
 }

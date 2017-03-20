@@ -38,7 +38,7 @@ class Login extends Component {
 
     render = () => {
         return (
-            <table>
+            /*<table>
                 <tbody>
                     <tr>
                         <th>Username </th>
@@ -53,7 +53,22 @@ class Login extends Component {
                     </tr>
                     {this.state.error ? <tr><td>{this.state.error}</td></tr> : null}
                 </tbody>
-            </table>
+            </table>*/
+            <div className="container-fluid">
+                <div className="well login-well">
+                    <h2>Log in to GreatCatch</h2>
+                    <div className="input-group">
+                        <span className="input-group-addon">Username</span>
+                        <input type="text" className="form-control"ref={(username) => this.usernameInput = username} />
+                    </div>
+                    <div className="input-group">
+                        <span className="input-group-addon">Password</span>
+                        <input type="password" className="form-control" ref={(password) => this.passwordInput = password} />
+                    </div>
+                    <a className='btn btn-primary' href='#' onClick={this.login}>Login</a>
+                    {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
+                </div>
+            </div>
         );
     }
 }

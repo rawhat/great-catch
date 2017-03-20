@@ -46,7 +46,7 @@ class SignUp extends Component {
 
     render = () => {
         return (
-            <table>
+            /*<table>
                 <tbody>
                     <tr>
                         <th>First Name </th>
@@ -68,7 +68,30 @@ class SignUp extends Component {
                         <th colSpan="2"> <input type="submit" value="Submit" onClick={this.signUp} /> </th>
                     </tr>
                 </tbody>
-            </table>
+            </table>*/
+
+            <div className="container-fluid">
+                <div className="well signup-well">
+                    <h2>Sign up to GreatCatch</h2>
+                    <div className="input-group">
+                        <span className="input-group-addon">First name</span>
+                        <input type="text" className="form-control" ref={(firstName) => this.firstNameInput = firstName} />
+                    </div>
+                    <div className="input-group">
+                        <span className="input-group-addon">Last name</span>
+                        <input type="text" className="form-control" ref={(lastName) => this.lastNameInput = lastName} />
+                    </div>
+                    <div className="input-group">
+                        <span className="input-group-addon">Email</span>
+                        <input type="text" className="form-control" ref={(password) => this.passwordInput = password} />
+                    </div>
+                    <div className="input-group">
+                        <span className="input-group-addon">Password</span>
+                        <input type="password" className="form-control" ref={(password) => this.passwordInput = password} />
+                    </div>
+                    <a href="#" className="btn btn-primary" onClick={this.signUp}>Sign Up</a>
+                </div>
+            </div>
         );
     }
 }
