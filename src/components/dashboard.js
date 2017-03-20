@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import Chart from 'chart.js';
 import axios from 'axios';
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
     constructor(props) {
         super(props);
 
@@ -81,13 +82,21 @@ export default class Dashboard extends Component {
         });
     }
 
+    signOut = () => {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('email');
+
+        this.props.router.push('/');
+    }
+
     render = () => {
         return (
             <div id="container">
                 <div id="header"> 
                     <img id="logo" src="/img/logo.png"/> 
                     <div id="navi">
-                        <a href="/" className="signIn">Sign Out</a>
+                        <a href="#" onClick={this.signOut}>Sign Out</a>
                     </div>
                 </div>
         
@@ -153,3 +162,5 @@ export default class Dashboard extends Component {
         );
     }
 }
+
+export default withRouter(Dashboard);
