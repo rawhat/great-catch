@@ -3,7 +3,9 @@ import { withRouter } from 'react-router';
 
 class HomePage extends Component {
     componentWillMount = () => {
-        if(sessionStorage.getItem('token')) {
+        var token = sessionStorage.getItem('token');
+        console.log(token);
+        if(!!token) {
             this.props.router.push('/dashboard');
         }
     }
