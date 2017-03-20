@@ -136,7 +136,9 @@ export default class Dashboard extends Component {
                     <button id="request_fitbit_data" type="button" onClick={this.getFitbitData} >Submit</button>
                 </div>
                 
-                <canvas width="400" height="400" ref={(chart) => this.chart = chart}></canvas>
+                <div className='chart-container'>
+                    <canvas width="400" height="400" ref={(chart) => this.chart = chart}></canvas>
+                </div>
                 </div>
                 <div id="footer">
                     Copyright &copy; GreatCatch.com
