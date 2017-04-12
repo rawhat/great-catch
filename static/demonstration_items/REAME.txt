@@ -1,0 +1,12 @@
+READ ME for this folder
+
+The purpose of this folder is to create stand alone elements
+for data analysis for final presentation
+
+I will create several scenerios here
+
+This can be absorbed into the main program later on if needed 
+or can just show this as it is
+
+- Wenyu Xin
+4/11/17
