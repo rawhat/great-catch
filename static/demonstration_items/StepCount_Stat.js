@@ -8,7 +8,7 @@
 	TODO:
 	find the corresponding APIs for drug, disease, and weather
 	
-	last mod 04/11/17
+	last mod 04/12/17
 	
 
 	PROGRAM LOGIC - step count:
@@ -26,6 +26,8 @@
 			1.3.1) linear regression for both data with and without new data
 				1.3.1.1) new data slope < old data slope
 					1.3.1.1.1) correlation
+						1.3.1.1.1.1) weather
+						1.3.1.1.1.2) medicine
 					1.3.1.1.2) "abnormal"
 				1.3.1.2) new data slope => old data slope
 					1.3.1.2.1) "normal"
@@ -52,6 +54,11 @@
 
 // require stat package
 var stat = require("simple-statistics");
+// require http package
+var http = require("http");
+// require https package
+var https = require("https");
+
 
 /*
 	calculate mean absolute deviation
@@ -116,7 +123,9 @@ function deterResult(originData, oldData){
 	
 	// if new slope is equal or lower than old slope
 	if (newSlope < oldSlope){
-		return ("Abnormal w/ linear regression w/ TODO: Do correlation");
+		// TODO: this is here for testing, will need to pass parameter over
+		weatherCheck(19104);
+		drugCheck("LETAIRIS");
 	}else{
 		return ("normal w/ linear regression");
 	}
@@ -153,8 +162,6 @@ function compareMAD(newData, oldData){
 			- normal w/ linear regression
 */
 function deterDataSize(data){
-	console.log(weatherCheck(19104))
-
 	var dataSize = data.length
 	if (dataSize == 1){
 		return ("System still calibrating, come back tomorrow");
@@ -184,14 +191,58 @@ function parseData(data){
 
 /*
 	weather correlation
-	
+	input:
+		zipcode: zipcode of the user
+	output:
+		weatherSum: total up fog, rain, snow and etc
+		
+	TODO:
+		figure out how to link with main analysis
 */
 function weatherCheck(zipcode){
 	var key = "971c72f24410bd75";
 	var date = new Date();
 	var date = date.getFullYear().toString() + ("0" + (date.getMonth() + 1).toString()).slice(-2) + ("0" + date.getDate().toString()).slice(-2)
-	var url = "http://api.wunderground.com/api/" + key + "/history_" + date + "/q/" + zipcode + ".json";
-	return url
+	var url = "http://api.wunderground.com/api/" + key + "/history_" + date + "/q/" + zipcode.toString() + ".json";
+	http.get(url, function(res){
+		var body = "";
+		var parsed;
+		res.on('data', function(data){
+			body += data;
+		});
+		res.on('end', function(){
+			parsed = JSON.parse(body);
+			var mainInfo = parsed.history.dailysummary[0];
+			var weatherSum = parseInt(mainInfo.fog) + parseInt(mainInfo.rain) + parseInt(mainInfo.snow) + parseInt(mainInfo.hail) + parseInt(mainInfo.thunder) + parseInt(mainInfo.tornado);
+			console.log(weatherSum);
+		});
+	});
+}
+
+/*
+	drug correlation
+	input:
+		drug: medicine user take
+	output:
+		nComplain: number of complains for fatigue for this medicine
+	
+	TODO: fix this
+*/
+function drugCheck(drug){
+	var key = "kZ1dIlu9TyKAzlXidiBuejvdfXmQmLWpq2BF0wqY"
+	url = "https://api.fda.gov/drug/event.json?api_key=" + key + "&search=patient.reaction.reactionmeddrapt:'fatigue'" + "brand_name:" + drug;
+	https.get(url, function(res){
+		var body = "";
+		var parsed;
+		res.on('data', function(data){
+			body += data;
+		});
+		res.on('end', function(){
+			parsed = JSON.parse(body);
+			console.log(parsed.meta);
+		});
+	});
+	
 }
 
 module.exports = {

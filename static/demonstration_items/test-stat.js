@@ -1,6 +1,7 @@
 // test purpose
 var test = require('./StepCount_Stat.js');
 var results 
+var http = require('http'); 
 
 // step counts only
 
