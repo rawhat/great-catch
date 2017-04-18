@@ -3,26 +3,29 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Great Catch</title>
-    <link href="../css/profile.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/home.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/profile.css" rel="stylesheet" type="text/css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js"></script>
-    <script src="../js/profile.js"></script>
+    <script src="/js/profile.js"></script>
 </head>
 
 <body>
 	<div id="container">
-    	<div id="header">
-        	<img id="logo" src="../img/logo.png"/>
-      </div>
-
+    	<div id="header"> 
+        	<img id="logo" src="/img/logo.png"/> 
+        	<div id="navi">
+            	<a href="/html/home.html" class="signIn">Sign Out</a>
+            </div>
+        </div>
+	
    <!-- This is profile body-->
-
+   
         <div id="profileBody">
         	<div id="banner">
-            	<h2>Welcome, <span id="userName">User name</span>!</h2>
-              <a href="profileEdit.html" > Edit Profile </a>
+            	<h2>Welcome, <span id="userName">User name!</span></h2>
             </div>
-
+            
            <table id="infoTable">
            		<tr>
                 	<th>First Name:</th>
@@ -36,14 +39,6 @@
                 	<th>Email Address:</th>
                     <th id="eAddress"></th>
                 </tr>
-                <tr>
-                	<th>Emergency Contacts:</th>
-                    <th id="eContacts"></th>
-                </tr>
-                <tr>
-                	<th>Medicine:</th>
-                    <th id="Medicine"></th>
-                </tr>
            </table>
 
            <div id='fitbit-auth-link'>
@@ -51,7 +46,7 @@
                    <button>Authorize FitBit</button>
                 </a>
            </div>
-
+            
             <div id="userInput">
                	<select  name="fitbit_dataType">
                     <option value="heart_rate">Heart Rate</option>
@@ -59,7 +54,7 @@
                     <option value="steps">Steps</option>
                     <option value="distance">Distance</option>
              	</select>
-
+              
                	<select name="range">
                     <option value="5_min">5 minutes</option>
                     <option value="30_min">30 minutes</option>
@@ -67,23 +62,23 @@
                     <option value="1_d">1 day</option>
                     <option value="15_d">15 day</option>
              	</select>
-
+        	
         		<input type="date" name="selected_date">
-
+                
                 <button id="request_fitbit_data" type="button" >Submit</button>
         	</div>
-
+            
             <canvas id="myChart" width="400" height="400"></canvas>
-
-
+            
+        
         </div>
-
-
+        	
+        
         <div id="footer">
         	Copyright &copy; GreatCatch.com
         </div>
     </div>
-
-
+	
+		
 </body>
 </html>

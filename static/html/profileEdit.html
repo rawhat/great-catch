@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Great Catch</title>
+
+    <link href="../css/profile.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js"></script>
+    <script src="../js/profileEdit.js"></script>
+    <link href="../css/profileEdit.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+	<div id="container">
+    	<div id="header">
+        	<img id="logo" src="../img/logo.png"/>
+      </div>
+
+   <!-- This is form body-->
+      <div id="editForm">
+        <table style="width:50%;"  cellspacing="10" >
+          <tr >
+            <th>First Name :</th>
+            <td ><input type="text"></td>
+          </tr>
+          <tr >
+            <th>Last Name :</th>
+            <td><input type="text"></td>
+
+          </tr>
+          <tr >
+            <th>Date of Birth :</th>
+            <td ><input type="date" name="dob"></td>
+          </tr>
+          <tr >
+            <th>Email Address :</th>
+            <td><input type="text"></td>
+          </tr>
+          <tr >
+            <th>Emergency Contacts :</tt>
+            <td>
+              <div class="tasks-box" id="tasksbox">
+
+                <div class="task">
+                  <input type="text" id="emailContent" placeholder="Type in email here" />
+                  <button id="addbtn" onclick="addEmail()">Add</button>
+                </div>
+
+                <h6>Emails: </h6>
+                <div id="EmailList"></div>
+
+              </div>
+            </td>
+          </tr>
+          <tr >
+            <th>Medicine</th>
+            <td>
+              <div class="tasks-box" id="tasksbox">
+
+                <div class="task">
+                  <input type="text" id="medicineContent" placeholder="Type in medicine here" />
+                  <button id="addbtn" onclick="addMedicine()">Add</button>
+                </div>
+
+                <h6>Medicines: </h6>
+                <div id="MedicineList"></div>
+
+              </div>
+            </td>
+          </tr>
+
+          <tr >
+            <th><button id="savebtn"> save  </button>     </th>
+            <td>  <a href="profile.html" >  back </a></td>
+          </tr>
+
+        </table>
+
+      </div> <!--  editForm -->
+
+
+  </div>
+
+
+        <div id="footer">
+        	Copyright &copy; GreatCatch.com
+        </div>
+    </div>
+
+
+</body>
+</html>

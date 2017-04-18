@@ -1,0 +1,21 @@
+/* CSS Document */
+
+#banner{
+margin-top:20px;
+margin-left:50px;
+
+}
+
+#infoTable{
+	margin: 20px auto;
+}
+
+#userInput{
+	text-align:center;
+}
+#request_fitbit_data{
+margin-left:50px;
+}
+#myChar{
+margin:20px auto;
+}

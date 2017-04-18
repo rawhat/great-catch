@@ -9,8 +9,17 @@ margin-left:50px;
 #infoTable{
 	margin: 20px auto;
 }
+#banner{
+  text-align:center;
+}
+
+body {
+  background: #f7f5f0;
+  font-family: 'Titillium Web', sans-serif;
+}
 
 #userInput{
+  margin-top: 20px;
 	text-align:center;
 }
 #request_fitbit_data{
@@ -18,4 +27,22 @@ margin-left:50px;
 }
 #myChar{
 margin:20px auto;
+}
+#fitbit-auth-link{
+  text-align:center;
+}
+#footer {
+    padding: 1em;
+    color: black;
+    background-color: #f7f5f0;;
+    clear: left;
+    text-align: center;
+}
+
+#header{
+	height:70px;
+	width:293px;
+	/*border:#000000 1px solid;*/
+	margin:auto;
+	margin-top: 20px;
 }

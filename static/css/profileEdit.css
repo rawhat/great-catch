@@ -1,0 +1,46 @@
+#header{
+	height:70px;
+	width:293px;
+	/*border:#000000 1px solid;*/
+	margin:auto;
+	margin-top: 20px;
+}
+
+
+#footer {
+    padding: 1em;
+    color: black;
+    clear: left;
+    text-align: center;
+}
+
+body {
+  background: #f7f5f0;
+  font-family: 'Titillium Web', sans-serif;
+}
+.tasks-box{
+	width:400px;
+	height:auto;
+	margin:40px auto;
+}
+.task{
+	margin:10px;
+}
+.task input[type="text"]
+{
+	width:300px;
+	border:none;
+	border-color:#ccc;
+	border-width:1px;
+	border-bottom-style:dashed;
+
+}
+
+.task label{
+	font-size:14px;
+}
+
+h6{
+	margin-top: 8px;
+	color:#1E90FF;
+}
