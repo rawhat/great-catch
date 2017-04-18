@@ -229,8 +229,8 @@ function weatherCheck(zipcode){
 	TODO: fix this
 */
 function drugCheck(drug){
-	var key = "kZ1dIlu9TyKAzlXidiBuejvdfXmQmLWpq2BF0wqY"
-	url = "https://api.fda.gov/drug/event.json?api_key=" + key + "&search=patient.reaction.reactionmeddrapt:'fatigue'" + "brand_name:" + drug;
+	var key = "kZ1dIlu9TyKAzlXidiBuejvdfXmQmLWpq2BF0wqY";
+	url = "https://api.fda.gov/drug/event.json?api_key=" + key + "&search=reaction.reactionmeddrapt.exact='Fatigue'+AND+brand_name:'LETAIRIS'" + drug;
 	https.get(url, function(res){
 		var body = "";
 		var parsed;
@@ -239,7 +239,7 @@ function drugCheck(drug){
 		});
 		res.on('end', function(){
 			parsed = JSON.parse(body);
-			console.log(parsed.meta);
+			console.log(parsed);
 		});
 	});
 	
