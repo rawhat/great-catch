@@ -7,7 +7,6 @@ $(document).ready(function(){
 		var choice = $('#caseChoice').find(":selected").val();
 		var data = getData(choice);
 		$('#infoDisplay').html("Medication: " + data.drug + "<br>Zip Code: " + data.zip);
-		stat.deterDataSize(data);
 		var myChart = new Chart(chart, {
 			type: 'line',
 			data: {
