@@ -107,7 +107,7 @@ function calcLinearRegr(data){
 /*
 	determine case
 	input: 
-		originData: past data w/ today's data 
+		originData: all data
 		oldData: past data
 	output:
 		message
@@ -119,15 +119,13 @@ function deterResult(originData, oldData){
 	// get slope of old data
 	var oldSlope = calcLinearRegr(oldData);
 	// get slope of extended data
-	var newSlope = calcLinearRegr(originData);
+	var newSlope = calcLinearRegr(originData.steps);
 	
 	// if new slope is equal or lower than old slope
 	if (newSlope < oldSlope){
-		// TODO: this is here for testing, will need to pass parameter over
-		var result = weatherCheck(19104, "LETAIRIS", drugCheck);
-		return result;
+		weatherCheck(originData.zip, originData.drug, drugCheck);
 	}else{
-		return ("normal w/ linear regression");
+		console.log("normal w/ linear regression");
 	}
 }
 
@@ -143,9 +141,9 @@ function deterResult(originData, oldData){
 */
 function compareMAD(newData, oldData){
 	if (newData <= calcMAD(oldData)){
-		return("abnormal w/ MAD");
+		console.log("abnormal w/ MAD");
 	}else{
-		return("normal w/ MAD");
+		console.log("normal w/ MAD");
 	}
 }
 
@@ -162,15 +160,16 @@ function compareMAD(newData, oldData){
 			- normal w/ linear regression
 */
 function deterDataSize(data){
-	var dataSize = data.length
+	var steps = data.steps;
+	var dataSize = steps.length;
 	if (dataSize == 1){
-		return ("System still calibrating, come back tomorrow");
+		console.log("System still calibrating, come back tomorrow");
 	}else if (dataSize > 1 && dataSize <15){
-		var parsedData = parseData(data)
-		return (compareMAD(parsedData[0], parsedData[1]));
+		var parsedData = parseData(steps)
+		compareMAD(parsedData[0], parsedData[1]);
 	}else{
-		var parsedData = parseData(data)
-		return (deterResult(data, parsedData[1]));
+		var parsedData = parseData(steps)
+		deterResult(data, parsedData[1]);
 	}
 }
 
@@ -256,13 +255,14 @@ function correlationAlert(drug, weather){
 	var starter = "We have found ";
 	var drugMsg = "your medicine is making you fatigue";
 	var weatherMsg = "today's weather around your location is bad";
-	if (drug > 0 && weather > 0){
+	var drugThreshold = 1000;
+	if (drug >= drugThreshold && weather > 0){
 		console.log( starter + drugMsg + "AND " + weatherMsg);
-	}else if (drug > 0 && weather == 0){
+	}else if (drug >= drugThreshold && weather == 0){
 		console.log( starter + drugMsg);
-	}else if (drug == 0 && weather == 0){
+	}else if (drug < drugThreshold && weather == 0){
 		console.log( nothing);
-	}else if (drug == 0 && weather > 0){
+	}else if (drug < drugThreshold && weather > 0){
 		console.log( starter + weatherMsg);
 	}
 }

@@ -1,0 +1,17 @@
+div{
+	padding: 2%;
+}
+
+#footer {
+    padding: 1em;
+    color: black;
+    background-color: #f7f5f0;
+    clear: left;
+    text-align: center;
+}
+
+#container {
+	width: 95%;
+	border: 1px dotted;
+	margin: 0 auto;
+}
