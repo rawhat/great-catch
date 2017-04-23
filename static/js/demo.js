@@ -90,6 +90,11 @@ $(document).ready(function(){
 			}; 
 		}
 		return data;
-	}
+	};
+	
+	// go back to profile
+	$('#goBack').click(function(){
+		window.location.href = "/html/profile.html";
+	});
 	
 });
