@@ -12,6 +12,7 @@ div{
 
 #container {
 	width: 95%;
-	border: 1px dotted;
-	margin: 0 auto;
+	border: 1px solid lightgray;
+    border-radius: 2px;
+	margin: 10px auto;
 }

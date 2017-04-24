@@ -205,7 +205,7 @@ function parseData(data){
 async function weatherCheck(zipcode){
 	var key = "971c72f24410bd75";
 	var date = new Date();
-	date = date.getFullYear().toString() + ("0" + (date.getMonth() + 1).toString()).slice(-2) + ("0" + date.getDate().toString()).slice(-2)
+	date = date.getFullYear().toString() + ("0" + (date.getMonth() + 1).toString()).slice(-2) + ("0" + date.getDate().toString()).slice(-2);
 	var url = "http://api.wunderground.com/api/" + key + "/history_" + date + "/q/" + zipcode.toString() + ".json";
 	let response = await axios.get(url);
 	let parsed = response.data;

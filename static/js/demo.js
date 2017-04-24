@@ -4,7 +4,7 @@ $(document).ready(function(){
 	// click submit
 	$("#getCase").click(function(){
 		$('#assessment').text('');
-		$('#assessment').removeClass('alert alert-info');
+		$('#assessment').removeClass('alert alert-info alert-warning');
 		var chart = $("#myChart");
 		var choice = $('#caseChoice').find(":selected").val();
 		var data = getData(choice);
@@ -42,7 +42,12 @@ $(document).ready(function(){
 			data
 		}).then((res) => {
 			$('#assessment').text(res);
-			$('#assessment').addClass('alert alert-info');
+			if(res.search('AND') === -1) {
+				$('#assessment').addClass('alert alert-info');
+			}
+			else {
+				$('#assessment').addClass('alert alert-warning');
+			}
 		});
 	});
 	
