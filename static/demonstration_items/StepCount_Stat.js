@@ -55,9 +55,10 @@
 // require stat package
 var stat = require("simple-statistics");
 // require http package
-var http = require("http");
+// var http = require("http");
 // require https package
-var https = require("https");
+// var https = require("https");
+var axios = require('axios');
 
 
 /*
@@ -92,9 +93,9 @@ function calcMAD(data){
 */
 function calcLinearRegr(data){
 	// create coordinate pairs
-	var xy = []
+	var xy = [];
 	for (var i = 0; i < data.length; i++){
-		xy.push([i, data[i]])
+		xy.push([i, data[i]]);
 	}
 	
 	// calc linear regression
@@ -114,7 +115,7 @@ function calcLinearRegr(data){
 			- abnormal w/ correlation
 			- normal
 */
-function deterResult(originData, oldData){
+async function deterResult(originData, oldData){
 	
 	// get slope of old data
 	var oldSlope = calcLinearRegr(oldData);
@@ -123,9 +124,11 @@ function deterResult(originData, oldData){
 	
 	// if new slope is equal or lower than old slope
 	if (newSlope < oldSlope){
-		weatherCheck(originData.zip, originData.drug, drugCheck);
+		let weather = await weatherCheck(originData.zip);//, originData.drug);//, drugCheck);
+		let response = await drugCheck(originData.drug, weather);
+		return response;
 	}else{
-		console.log("normal w/ linear regression");
+		return ("normal w/ linear regression");
 	}
 }
 
@@ -141,9 +144,9 @@ function deterResult(originData, oldData){
 */
 function compareMAD(newData, oldData){
 	if (newData <= calcMAD(oldData)){
-		console.log("abnormal w/ MAD");
+		return ("abnormal w/ MAD");
 	}else{
-		console.log("normal w/ MAD");
+		return ("normal w/ MAD");
 	}
 }
 
@@ -159,17 +162,18 @@ function compareMAD(newData, oldData){
 			- abnormal w/ linear regression w/ suggestions
 			- normal w/ linear regression
 */
-function deterDataSize(data){
+async function deterDataSize(data){
 	var steps = data.steps;
 	var dataSize = steps.length;
 	if (dataSize == 1){
-		console.log("System still calibrating, come back tomorrow");
+		return ("System still calibrating, come back tomorrow");
 	}else if (dataSize > 1 && dataSize <15){
-		var parsedData = parseData(steps)
-		compareMAD(parsedData[0], parsedData[1]);
+		let parsedData = parseData(steps);
+		return compareMAD(parsedData[0], parsedData[1]);
 	}else{
-		var parsedData = parseData(steps)
-		deterResult(data, parsedData[1]);
+		let parsedData = parseData(steps);
+		let results = await deterResult(data, parsedData[1]);
+		return results;
 	}
 }
 
@@ -198,24 +202,30 @@ function parseData(data){
 	TODO:
 		figure out how to link with main analysis
 */
-function weatherCheck(zipcode, drug, callback){
+async function weatherCheck(zipcode){
 	var key = "971c72f24410bd75";
 	var date = new Date();
-	var date = date.getFullYear().toString() + ("0" + (date.getMonth() + 1).toString()).slice(-2) + ("0" + date.getDate().toString()).slice(-2)
+	date = date.getFullYear().toString() + ("0" + (date.getMonth() + 1).toString()).slice(-2) + ("0" + date.getDate().toString()).slice(-2)
 	var url = "http://api.wunderground.com/api/" + key + "/history_" + date + "/q/" + zipcode.toString() + ".json";
-	http.get(url, function(res){
-		var body = "";
-		var parsed;
-		res.on('data', function(data){
-			body += data;
-		});
-		res.on('end', function(){
-			parsed = JSON.parse(body);
-			var mainInfo = parsed.history.dailysummary[0];
-			var weatherSum = parseInt(mainInfo.fog) + parseInt(mainInfo.rain) + parseInt(mainInfo.snow) + parseInt(mainInfo.hail) + parseInt(mainInfo.thunder) + parseInt(mainInfo.tornado);
-			callback(drug, weatherSum);
-		});
-	});
+	let response = await axios.get(url);
+	let parsed = response.data;
+	var mainInfo = parsed.history.dailysummary[0];
+	var weatherSum = parseInt(mainInfo.fog) + parseInt(mainInfo.rain) + parseInt(mainInfo.snow) + parseInt(mainInfo.hail) + parseInt(mainInfo.thunder) + parseInt(mainInfo.tornado);
+	return weatherSum;
+
+	// , function(res){
+	// 	var body = "";
+	// 	var parsed;
+	// 	res.on('data', function(data){
+	// 		body += data;
+	// 	});
+	// 	res.on('end', function(){
+	// 		parsed = JSON.parse(body);
+	// 		var mainInfo = parsed.history.dailysummary[0];
+	// 		var weatherSum = parseInt(mainInfo.fog) + parseInt(mainInfo.rain) + parseInt(mainInfo.snow) + parseInt(mainInfo.hail) + parseInt(mainInfo.thunder) + parseInt(mainInfo.tornado);
+	// 		callback(drug, weatherSum);
+	// 	});
+	// });
 }
 
 /*
@@ -225,21 +235,35 @@ function weatherCheck(zipcode, drug, callback){
 	output:
 		nComplain: number of complains for fatigue for this medicine
 */
-function drugCheck(drug, weather){
-	var key = "kZ1dIlu9TyKAzlXidiBuejvdfXmQmLWpq2BF0wqY";
-	url = "https://api.fda.gov/drug/event.json?api_key=" + key + "&search=reaction.reactionmeddrapt.exact=" + "Fatigue" + "+AND+brand_name:" + drug;
-	https.get(url, function(res){
-		var body = "";
-		var parsed;
-		res.on('data', function(data){
-			body += data;
-		});
-		res.on('end', function(){
-			var parsed = JSON.parse(body);
+async function drugCheck(drug, weather){
+	if(drug.toUpperCase() === "N/A") {
+		return correlationAlert(0, weather);
+	}
+	else {
+		var key = "kZ1dIlu9TyKAzlXidiBuejvdfXmQmLWpq2BF0wqY";
+		var url = "https://api.fda.gov/drug/event.json?api_key=" + key + "&search=reaction.reactionmeddrapt.exact=" + "Fatigue" + "+AND+brand_name:" + drug;
+		let response = await axios.get(url);
+		let parsed = response.data;
+
+		if(parsed.meta) {
 			var count = parsed.meta.results.total;
-			correlationAlert(count, weather);
-		});
-	});	
+			return correlationAlert(count, weather);
+		}
+		else {
+			return correlationAlert(0, weather);
+		}
+		// , function(res){
+		// 	var body = "";
+		// 	res.on('data', function(data){
+		// 		body += data;
+		// 	});
+		// 	res.on('end', function(){
+		// 		var parsed = JSON.parse(body);
+		// 		var count = parsed.meta.results.total;
+		// 		correlationAlert(count, weather);
+		// 	});
+		// });
+	}
 }
 
 /*
@@ -251,19 +275,19 @@ function drugCheck(drug, weather){
 		msg: indicate any of the finding
 */
 function correlationAlert(drug, weather){
-	var nothing = "We have found no reason why your step count decreased, stop being lazy"
+	var nothing = "We have found no reason why your step count decreased, stop being lazy";
 	var starter = "We have found ";
 	var drugMsg = "your medicine is making you fatigue";
 	var weatherMsg = "today's weather around your location is bad";
 	var drugThreshold = 1000;
 	if (drug >= drugThreshold && weather > 0){
-		console.log( starter + drugMsg + "AND " + weatherMsg);
+		return ( starter + drugMsg + " AND " + weatherMsg);
 	}else if (drug >= drugThreshold && weather == 0){
-		console.log( starter + drugMsg);
+		return ( starter + drugMsg);
 	}else if (drug < drugThreshold && weather == 0){
-		console.log( nothing);
+		return ( nothing);
 	}else if (drug < drugThreshold && weather > 0){
-		console.log( starter + weatherMsg);
+		return ( starter + weatherMsg);
 	}
 }
 

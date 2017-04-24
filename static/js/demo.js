@@ -3,6 +3,8 @@ $(document).ready(function(){
 	
 	// click submit
 	$("#getCase").click(function(){
+		$('#assessment').text('');
+		$('#assessment').removeClass('alert alert-info');
 		var chart = $("#myChart");
 		var choice = $('#caseChoice').find(":selected").val();
 		var data = getData(choice);
@@ -35,7 +37,14 @@ $(document).ready(function(){
 				}
 			}
 		});
-	})
+
+		$.post('/analysis/step', {
+			data
+		}).then((res) => {
+			$('#assessment').text(res);
+			$('#assessment').addClass('alert alert-info');
+		});
+	});
 	
 	// return fake data
 	function getData(choice){

@@ -1,5 +1,8 @@
 var path = require('path');
 var _ = require('lodash');
+
+var deterDataSize = require('./static/demonstration_items/StepCount_Stat').deterDataSize;
+
 var koa = require('koa');
 var app = new koa();
 const session = require('koa-session');
@@ -56,6 +59,8 @@ app.use(convert(jwt.unless({
     /^\/signup$/,
     /^\/user\/create$/,
     /^\/auth\/fitbit\/callback$/,
+    // remove this later
+    /^\/analysis\/step$/
   ]
 })));
 
@@ -318,6 +323,13 @@ router.post('/api/fitbit', async (ctx) => {
         else
             ctx.body = e.message;
     }
+});
+
+router.post('/analysis/step', async (ctx) => {
+    let { data } = ctx.request.body;
+    let res = await deterDataSize(data);
+
+    ctx.body = res;
 });
 
 router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
