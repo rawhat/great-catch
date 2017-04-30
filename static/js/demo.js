@@ -18,9 +18,17 @@ $(document).ready(function(){
 					data: data.steps.slice(0, -1),
 					backgroundColor: 'rgba(255, 99, 132, 0.2)'
 				},{
-					label: 'Step Count - past 14 days plus today',
+					label: 'Step Count - past 13 days plus today',
 					data: data.steps.slice(1, data.steps.length),
 					backgroundColor: 'rgba(255, 153, 0, 0.4)'
+				},{
+					label: 'Heart Rate - past 14 days plus today',
+					data: data.heartRates.slice(0, -1),
+					backgroundColor: 'rgba(255, 206, 86, 0.2)'
+				},{
+					label: 'Heart Rate - past 13 days plus today',
+					data: data.heartRates.slice(1, data.heartRates.length),
+					backgroundColor: 'rgba(153, 102, 255, 0.2)'
 				}]
 			},
 			options: {
@@ -31,7 +39,7 @@ $(document).ready(function(){
 						},
 						scaleLabel: {
 							display: true,
-							labelString: 'Step Count (n)'
+							labelString: 'Step Count (n) / Heart Rate (bpm)'
 						}
 					}]
 				}
@@ -58,6 +66,7 @@ $(document).ready(function(){
 			// no change
 			data = {
 				"steps":[1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
+				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"N/A",
 				"zip":19104
@@ -66,6 +75,7 @@ $(document).ready(function(){
 			// increase
 			data = {
 				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400],
+				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"N/A",
 				"zip":19104
@@ -74,6 +84,7 @@ $(document).ready(function(){
 			// decrease
 			data = {
 				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 1000],
+				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"N/A",
 				"zip":19104
@@ -82,6 +93,7 @@ $(document).ready(function(){
 			// decrease due to weather
 			data = {
 				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 1000],
+				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"N/A",
 				"zip":19104
@@ -90,6 +102,7 @@ $(document).ready(function(){
 			// decrease due to medication
 			data = {
 				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 1000],
+				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"Ritalin",
 				"zip":19104
@@ -98,6 +111,7 @@ $(document).ready(function(){
 			// decrease due to both weather and medication
 			data = {
 				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 300],
+				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"LETAIRIS",
 				"zip":19104
