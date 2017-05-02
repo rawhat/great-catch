@@ -108,7 +108,7 @@ async function deterStepResult(originData, oldData){
 		let response = await drugCheck(originData.drug, weather);
 		return response;
 	}else{
-		return ("We have determined your step count today is NORMAL using linear regression.<br> Your new data has a slope greater than equal to 0.");
+		return ("We have determined your step count today is NORMAL using linear regression.<br>- Your new data has a slope greater than equal to 0.");
 	}
 }
 
@@ -135,7 +135,7 @@ async function deterHeartRateResult(originData, oldData){
 		let response = await drugHeartRateCheck(originData.drug, slope);
 		return response;
 	}else{
-		return ("We have determined your heart rate today is NORMAL using linear regression.<br> Your new data has a slope greater than or equal to 0.");
+		return ("We have determined your heart rate today is NORMAL using linear regression.<br>- Your new data has a slope greater than or equal to 0.");
 	}
 }
 
@@ -153,9 +153,9 @@ async function deterHeartRateResult(originData, oldData){
 */
 function compareMAD(newData, oldData){
 	if (newData <= calcMAD(oldData)){
-		return ("has been determined ABNORMAL using mean absolute deviation (MAD).<br> Your new MAD value is less than or equal to old MAD.");
+		return ("has been determined ABNORMAL using mean absolute deviation (MAD).<br>- Your new MAD value is less than or equal to old MAD.");
 	}else{
-		return ("has been determined NORMAL using mean absolute deviation (MAD).<br> Your new MAD value is greater than old MAD.");
+		return ("has been determined NORMAL using mean absolute deviation (MAD).<br>- Your new MAD value is greater than old MAD.");
 	}
 }
 
@@ -182,7 +182,7 @@ async function deterDataSize(data){
 		// heart rate
 		let parsedHeartRateData = parseData(heartRates);
 		let heartRateMsg = compareMAD(parsedHeartRateData[0], parsedHeartRateData[1]);
-		return ("Step Count " + stepMsg + " AND " + "<br>Heart Rates ")
+		return ("Step Count " + stepMsg + " <br><br>AND<br> " + "<br>Heart Rates" + stepMsg);
 	}else{
 		// step
 		let parsedStepData = parseData(steps);
@@ -296,13 +296,13 @@ async function drugHeartRateCheck(drug, slope){
 */
 function stepCorrelationAlert(drug, weather, drugName){
 	var nothing = "We have found no reason why your step count DECREASED. We suggest you to take more action and do more walking.";
-	var starter = "We have found your step count today is ABNORMAL. But we also found that ";
-	var drugMsg = "your medicine " + drugName + " might be making you FATIGUE by using FDA drug complaint database.<br> Here is a link to WEBMD http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName;
-	var weatherMsg = "today's weather around your location is bad. There was either rain, snow, hail, thunderstorm, fog, tornado or combination of these.";
+	var starter = "We have found your step count today is ABNORMAL using linear regression and correlation. But we also found that: <br>";
+	var drugMsg = "- your medicine " + drugName + " might be making you FATIGUE by using FDA drug complaint database.<br> Here is a link to <a href=http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName + ' target="_blank">WEBMD</a>';
+	var weatherMsg = "- today's weather around your location is bad. There was either rain, snow, hail, thunderstorm, fog, tornado or combination of these.";
 	// hard threshold for FDA drug, no reason for the number
 	var drugThreshold = 1000;
 	if (drug >= drugThreshold && weather > 0){
-		return ( starter + drugMsg + " AND " + weatherMsg);
+		return ( starter + drugMsg + " <br> AND <br>" + weatherMsg);
 	}else if (drug >= drugThreshold && weather == 0){
 		return ( starter + drugMsg);
 	}else if (drug < drugThreshold && weather == 0){
@@ -323,13 +323,13 @@ function stepCorrelationAlert(drug, weather, drugName){
 */
 function heartRateCorrelationAlert(drug, slope, drugName){
 	var nothing = "We have found no reason why your heart rate INCREASED. We suggest you visit your PCP.";
-	var starter = "We have found your heart rates today is ABNORMAL. But we also found that ";
-	var drugMsg = "your medicine " + drugName + " might be causing HYPERTENSION by using FDA drug complaint database.<br> Here is a link to WEBMD http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName;
-	var stepMsg = "your step counts decreased or stayed the same today compared to previous dates using linear regression.";
+	var starter = "We have found your heart rates today is ABNORMAL using linear regression and correlation. But we also found that: <br>";
+	var drugMsg = "- your medicine " + drugName + " might be causing HYPERTENSION by using FDA drug complaint database.<br> Here is a link to WEBMD http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName;
+	var stepMsg = "- your step counts decreased or stayed the same today compared to previous dates using linear regression.";
 	// hard threshold for FDA drug, no reason for the number
 	var drugThreshold = 1000;
 	if (drug >= drugThreshold && slope <= 0){
-		return ( starter + drugMsg + " AND " + stepMsg);
+		return ( starter + drugMsg + " <br> AND <br> " + stepMsg);
 	}else if (drug >= drugThreshold && slope <= 0){
 		return ( starter + drugMsg);
 	}else if (drug < drugThreshold && slope > 0){
