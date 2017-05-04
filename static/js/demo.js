@@ -9,41 +9,43 @@ $(document).ready(function(){
 		var choice = $('#caseChoice').find(":selected").val();
 		var data = getData(choice);
 		$('#infoDisplay').html("Medication: " + data.drug + "<br>Zip Code: " + data.zip);
+		var maxY = Math.max(...data.steps);
 		var myChart = new Chart(chart, {
 			type: 'line',
 			data: {
 				labels: data.date,
 				datasets: [{
-					label: 'Step Count - past ' + data.steps.length + ' days',
+					label: 'Step Count - past ' + data.steps.length-1 + ' days',
 					data: data.steps.slice(0, -1),
-					borderColor: 'rgba(255, 99, 132, 0.2)',
+					backgroundColor: 'rgba(255, 99, 132, 0.2)',
 					fill: false,
-					borderWidths: 10
+					pointDotRadius: 10
 				},{
-					label: 'Step Count - past ' + data.steps.length + ' days',
+					label: 'Step Count - past ' + data.steps.length-1 + ' days',
 					data: data.steps.slice(1, data.steps.length),
-					borderColor: 'rgba(255, 153, 0, 0.4)',
+					backgroundColor: 'rgba(255, 153, 0, 0.4)',
 					fill: false,
-					borderWidths: 10
+					pointDotRadius: 10
 				},{
-					label: 'Heart Rate - past ' + data.steps.length + ' days',
+					label: 'Heart Rate - past ' + data.steps.length-1 + ' days',
 					data: data.heartRates.slice(0, -1),
-					borderColor: 'rgba(255, 206, 86, 0.2)',
+					backgroundColor: 'rgba(255, 206, 86, 0.2)',
 					fill: false,
-					borderWidths: 10
+					pointDotRadius: 10
 				},{
-					label: 'Heart Rate - past ' + data.steps.length + ' days',
+					label: 'Heart Rate - past ' + data.steps.length-1 + ' days',
 					data: data.heartRates.slice(1, data.heartRates.length),
-					borderColor: 'rgba(153, 102, 255, 0.2)',
+					backgroundColor: 'rgba(153, 102, 255, 0.2)',
 					fill: false,
-					borderWidths: 10
+					pointDotRadius: 10
 				}]
 			},
 			options: {
 				scales: {
 					yAxes: [{
 						ticks: {
-							beginAtZero:true
+							beginAtZero:true,
+							max: maxY + 100
 						},
 						scaleLabel: {
 							display: true,
@@ -73,25 +75,25 @@ $(document).ready(function(){
 		if (choice == 'case1'){
 			// no change
 			data = {
-				"steps":[1000, 1000, 1000],
-				"heartRates":[60, 60, 60],
-				"date":["Day 1", "Day 2", "Day 3"],
+				"steps":[1000],
+				"heartRates":[70],
+				"date":["Day 1"],
 				"drug":"N/A",
 				"zip":19104
 			}; 
 		}else if (choice == 'case2'){
 			// increase
 			data = {
-				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400],
-				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
-				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
+				"steps":[1000, 1000, 1000, 1000],
+				"heartRates":[60, 60, 60, 60],
+				"date":["Day 1", "Day 2", "Day 3", "Day 4"],
 				"drug":"N/A",
 				"zip":19104
 			};
 		}else if (choice == 'case3'){
 			// decrease
 			data = {
-				"steps":[1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 1000],
+				"steps":[1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
 				"heartRates":[60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
 				"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14"],
 				"drug":"N/A",
