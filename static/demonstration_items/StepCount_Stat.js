@@ -75,7 +75,7 @@ function calcLinearRegr(data){
 	// create coordinate pairs
 	var xy = [];
 	for (var i = 0; i < data.length; i++){
-		xy.push([i, data[i]]);
+		xy.push([i, parseInt(data[i])]);
 	}
 	
 	// calc linear regression
@@ -182,7 +182,7 @@ async function deterDataSize(data){
 		// heart rate
 		let parsedHeartRateData = parseData(heartRates);
 		let heartRateMsg = compareMAD(parsedHeartRateData[0], parsedHeartRateData[1]);
-		return ("Step Count " + stepMsg + " <br><br>AND<br> " + "<br>Heart Rates" + stepMsg);
+		return ("Step Count " + stepMsg + " <br><br> " + "<br>Heart Rates " + stepMsg);
 	}else{
 		// step
 		let parsedStepData = parseData(steps);
@@ -203,7 +203,7 @@ async function deterDataSize(data){
 		- oldData: past data
 */
 function parseData(data){
-	var oldData = data.slice(0, -2);
+	var oldData = data.slice(0, -1);
 	var newData = data.slice(-1)[0];
 	
 	return [newData, oldData];
@@ -324,18 +324,18 @@ function stepCorrelationAlert(drug, weather, drugName){
 function heartRateCorrelationAlert(drug, slope, drugName){
 	var nothing = "We have found no reason why your heart rate INCREASED. We suggest you visit your PCP.";
 	var starter = "We have found your heart rates today is ABNORMAL using linear regression and correlation. But we also found that: <br>";
-	var drugMsg = "- your medicine " + drugName + " might be causing HYPERTENSION by using FDA drug complaint database.<br> Here is a link to WEBMD http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName;
+	var drugMsg = "- your medicine " + drugName + " might be causing HYPERTENSION by using FDA drug complaint database.<br> Here is a link to <a href=http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName + ' target="_blank">WEBMD</a>';
 	var stepMsg = "- your step counts decreased or stayed the same today compared to previous dates using linear regression.";
 	// hard threshold for FDA drug, no reason for the number
 	var drugThreshold = 1000;
 	if (drug >= drugThreshold && slope <= 0){
 		return ( starter + drugMsg + " <br> AND <br> " + stepMsg);
-	}else if (drug >= drugThreshold && slope <= 0){
+	}else if (drug >= drugThreshold && slope > 0){
 		return ( starter + drugMsg);
-	}else if (drug < drugThreshold && slope > 0){
+	}else if (drug < drugThreshold && slope >= 0){
 		return ( nothing);
-	}else if (drug < drugThreshold && slope > 0){
-		return ( starter + weatherMsg);
+	}else if (drug < drugThreshold && slope < 0){
+		return ( starter + stepMsg);
 	}
 }
 
