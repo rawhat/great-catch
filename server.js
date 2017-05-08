@@ -51,22 +51,23 @@ var { graphqlKoa, graphiqlKoa } = require('graphql-server-koa');
 
 var myGraphQLSchema = require('./src/graphql/schema').graphqlSchema;
 
-app.use(convert(jwt.unless({ 
-  path: [
-    /^\/$/,
-    /^\/auth\/fitbit$/,
-    /^\/login$/,
-    /^\/signup$/,
-    /^\/user\/create$/,
-    /^\/auth\/fitbit\/callback$/,
-    // remove this later
-    /^\/analysis\/step$/
-  ]
-})));
+// app.use(convert(jwt.unless({ 
+//   path: [
+//     /^\/$/,
+//     /^\/css\/*/,
+//     /^\/js\/*/,
+//     /^\/html\/*/,
+//     /^\/auth\/fitbit$/,
+//     /^\/login$/,
+//     /^\/signup$/,
+//     /^\/user\/create$/,
+//     /^\/auth\/fitbit\/callback$/,
+//     // remove this later
+//     /^\/analysis\/step$/
+//   ]
+// })));
 
 router.post('/login', async (ctx) => {
-    console.log(ctx.request.body);
-
     let { username, password } = ctx.request.body;
 
     // fields:
@@ -155,7 +156,7 @@ router.get('/auth/fitbit/callback', async (ctx) => {
     }
 });
 
-router.post('/auth/fitbit/refresh', async (ctx) => {
+router.post('/auth/fitbit/refresh', jwt, async (ctx) => {
     let { refresh_token } = ctx.request.body;
 
      let headers = {
@@ -193,7 +194,7 @@ router.post('/auth/fitbit/refresh', async (ctx) => {
 });
 
 router.post('/user/create', async (ctx) => {
-    let { username, password, password_repeat, email } = ctx.request.body;
+    let { username, firstname, lastname, password, password_repeat, email } = ctx.request.body;
 
     // fields:
     //  { username, password, password_repeat, email }  -- any more?
@@ -201,13 +202,22 @@ router.post('/user/create', async (ctx) => {
     // CREATE USER IN DB, THEN USE IT TO SIGN JWT INSTEAD
 
     if(password === password_repeat) {
-
         let { records, error } = await makeDBQuery({ 
-            queryString: 'CREATE (u:User { username: {username}, password: {password}, email: {email}}) RETURN u AS user', 
+            queryString: `CREATE (u:User 
+                { username: {username}, 
+                  password: {password}, 
+                  email: {email}, 
+                  firstName: {firstname}, 
+                  lastName: {lastname},
+                  createdAt: {createdAt}
+                }) RETURN u AS user`, 
             object: {
                 username,
                 password,
-                email
+                email,
+                lastname,
+                firstname,
+                createdAt: Date.now()
             }
         });
 
@@ -219,9 +229,8 @@ router.post('/user/create', async (ctx) => {
             let token = jwebtoken.sign(user, SESSION_KEYS[0], { expiresIn: 60 * 60 * 5 });
 
             // ctx.body = { token };
-            console.log('user', user);
             ctx.body = Object.assign(_.omit(user, 'password'), { token });
-            ctx.status = 203;
+            ctx.status = 201;
         }
         else {
             console.error(error);
@@ -232,8 +241,7 @@ router.post('/user/create', async (ctx) => {
     }
 });
 
-router.get('/user/profile', async (ctx, next) => {
-    console.log(ctx.session);
+router.get('/user/profile', jwt, async (ctx, next) => {
     ctx.body = { auth_token: ctx.session.access_token };
 });
 
@@ -264,7 +272,7 @@ router.get('/user/:id/profile', async (ctx) => {
     }
 });
 
-router.get('/api/fitbit/test', async (ctx) => {
+router.get('/api/fitbit/test', jwt, async (ctx) => {
     if(ctx.session.access_token) {
         ctx.body = true;
     }
@@ -273,7 +281,7 @@ router.get('/api/fitbit/test', async (ctx) => {
     }
 });
 
-router.get('/auth/fitbit', (ctx) => {
+router.get('/auth/fitbit', async (ctx) => {
     // let { username } = ctx.query;
 
     var fitbitAuth = new ClientOAuth2({
@@ -289,8 +297,7 @@ router.get('/auth/fitbit', (ctx) => {
     ctx.redirect(uri);
 });
 
-router.post('/api/fitbit', async (ctx) => {
-    console.log(ctx.session.access_token);
+router.post('/api/fitbit', jwt, async (ctx) => {
     let { data_set, date = 'today', period = '1y' } = ctx.request.body;
 
     // let url = 'https://api.fitbit.com/1/user/-';
@@ -312,7 +319,6 @@ router.post('/api/fitbit', async (ctx) => {
     
     try {
         let response = await requestObject.get(url);
-        console.log(response.data);
         ctx.body = response.data;
     }
     catch(e) {
@@ -332,8 +338,8 @@ router.post('/analysis/step', async (ctx) => {
     ctx.body = res;
 });
 
-router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
-router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
+router.post('/graphql', jwt, graphqlKoa({ schema: myGraphQLSchema }));
+router.get('/graphql', jwt, graphqlKoa({ schema: myGraphQLSchema }));
 
 router.get('/graphiql', graphiqlKoa({ endpointURL: '/graphql' }));
 

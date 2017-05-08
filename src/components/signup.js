@@ -13,15 +13,20 @@ class SignUp extends Component {
 
     signUp = async () => {
         try {
-            let userName = `${this.firstNameInput.value}.${this.lastNameInput.value}`;
-            let password = this.passwordInput.value;
-            let userEmail = this.emailInput.value;
+            let usernameInput = this.username.value;
+            let firstName = this.firstName.value;
+            let lastName = this.lastName.value;
+            let password = this.password.value;
+            let password_repeat = this.passwordRepeat.value;
+            let emailInput = this.emailAddress.value;
 
             let response = await axios.post('/user/create', {
-                username: userName,
+                username: usernameInput,
+                firstname: firstName,
+                lastname: lastName,
                 password,
-                password_repeat: password,
-                email: userEmail
+                password_repeat,
+                email: emailInput
             });
 
             console.log(response);
@@ -35,6 +40,7 @@ class SignUp extends Component {
             this.props.router.push('/dashboard');
         }
         catch(e) {
+            console.log(e);
             this.setState((state) => {
                 return {
                     ...state,
@@ -46,48 +52,32 @@ class SignUp extends Component {
 
     render = () => {
         return (
-            /*<table>
-                <tbody>
-                    <tr>
-                        <th>First Name </th>
-                        <th>Last Name </th>
-                    </tr>
-                    <tr>
-                        <th><input style={{ margin: '10px 0px' }} type="text" ref={(firstName) => this.firstNameInput = firstName} /></th>
-                        <th><input type="text" ref={(lastName) => this.lastNameInput = lastName} /></th>
-                    </tr>
-                    <tr>
-                        <th>Email Address </th>
-                        <th>Password </th>
-                    </tr>
-                    <tr>
-                        <th><input style={{ margin: '10px 0px' }} type="text" ref={(email) => this.emailInput = email} /></th>
-                        <th><input type="password" ref={(password) => this.passwordInput = password} /> </th>
-                    </tr>
-                    <tr>
-                        <th colSpan="2"> <input type="submit" value="Submit" onClick={this.signUp} /> </th>
-                    </tr>
-                </tbody>
-            </table>*/
-
             <div className="container-fluid">
                 <div className="well signup-well">
                     <h2>Sign up to GreatCatch</h2>
                     <div className="input-group">
                         <span className="input-group-addon">First name</span>
-                        <input type="text" className="form-control" ref={(firstName) => this.firstNameInput = firstName} />
+                        <input type="text" className="form-control" ref={(firstName) => this.firstName = firstName} />
                     </div>
                     <div className="input-group">
                         <span className="input-group-addon">Last name</span>
-                        <input type="text" className="form-control" ref={(lastName) => this.lastNameInput = lastName} />
+                        <input type="text" className="form-control" ref={(lastName) => this.lastName = lastName} />
+                    </div>
+                    <div className="input-group">
+                        <span className="input-group-addon">Username</span>
+                        <input type="text" className="form-control" ref={(username) => this.username = username} />
                     </div>
                     <div className="input-group">
                         <span className="input-group-addon">Email</span>
-                        <input type="text" className="form-control" ref={(password) => this.passwordInput = password} />
+                        <input type="text" className="form-control" ref={(emailAddress) => this.emailAddress = emailAddress} />
                     </div>
                     <div className="input-group">
                         <span className="input-group-addon">Password</span>
-                        <input type="password" className="form-control" ref={(password) => this.passwordInput = password} />
+                        <input type="password" className="form-control" ref={(password) => this.password = password} />
+                    </div>
+                    <div className="input-group">
+                        <span className="input-group-addon">Password Repeat</span>
+                        <input type="password" className="form-control" ref={(passwordRepeat) => this.passwordRepeat = passwordRepeat} />
                     </div>
                     <a href="#" className="btn btn-primary" onClick={this.signUp}>Sign Up</a>
                 </div>

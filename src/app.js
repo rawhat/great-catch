@@ -6,6 +6,7 @@ import HomePage from './components/home-page';
 import Login from './components/login';
 import SignUp from './components/signup';
 import Dashboard from './components/dashboard';
+import isAuthenticated from './components/protected-component';
 
 // const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
@@ -14,6 +15,6 @@ render(
             <Route path='/' component={HomePage} />
             <Route path='/login' component={Login} />
             <Route path='/signup' component={SignUp} />
-            <Route path='/dashboard' component={Dashboard} />
+            <Route path='/dashboard' component={isAuthenticated(Dashboard)} />
         </Router>
 , document.querySelector('#app'));

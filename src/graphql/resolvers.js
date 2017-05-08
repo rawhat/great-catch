@@ -60,8 +60,6 @@ const resolvers = {
 				object
 			});
 
-            console.log(records);
-
 			return records[0].get('medicine').properties;
 		},
 		async addCaretaker(root, args) {
@@ -138,6 +136,22 @@ const resolvers = {
 			});
 
 			return records[0].get('supportRequest').properties;
+		},
+		async updateUser(root, args) {
+			let { username, updateUser } = args;
+			let object = Object.assign({}, updateUser, { username });
+
+			let { records, error } = await makeDBQuery({ queryString: `
+				MATCH (u:User) WHERE u.username = {username}
+				SET u.firstName = {firstName},
+					u.lastName = {lastName},
+					u.email = {email}
+				RETURN u as user;
+			`,
+			object
+		});
+		
+		return records[0].get('user').properties;
 		}
 	},
 	User: {

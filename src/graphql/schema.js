@@ -24,6 +24,12 @@ const schema = `
 		fitbitID: String
 	}
 
+	input UpdateUser {
+		firstName: String!
+		lastName: String!
+		email: String!
+	}
+
 	type UserCaretaker {
 		id: Int!
 		role: String!
@@ -91,6 +97,7 @@ const schema = `
 		addCaretaker(username: String!, caretaker: InputCaretaker!): UserCaretaker
 		addAlert(username: String!, alert: InputAlert!): Alert
 		addSupportRequest(username: String!, supportRequest: InputSupportRequest!): UserSupportRequest
+		updateUser(username: String!, updateUser: UpdateUser): User
 	}
 `;
 
