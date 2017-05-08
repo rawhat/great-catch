@@ -89,7 +89,7 @@ class Dashboard extends Component {
         let response = await this.makeGraphQLQuery(graphqlQuery);
         if(response.status === 200) {
             this.setState({
-                addingMedicine: false
+                addingCaretaker: false
             }, () => {
                 this.getUserProfile();
             });
@@ -134,7 +134,7 @@ class Dashboard extends Component {
         let response = await this.makeGraphQLQuery(graphqlQuery);
         if(response.status === 200) {
             this.setState({
-                addingCaretaker: false
+                addingMedicine: false
             }, () => {
                 this.getUserProfile();
             });
@@ -166,7 +166,7 @@ class Dashboard extends Component {
                 }
             }
         `;
-        
+
         let response = await this.makeGraphQLQuery(graphqlQuery);
 
         if(response.status === 200) {
