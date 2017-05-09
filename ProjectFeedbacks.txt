@@ -1,0 +1,13 @@
+1) look into days of the week, weekend vs weekday
+2) heart rate
+	- correlate with
+		- medication
+		- step count
+3) add a link to WebMD for the medicine with issues
+4) only compare with normal pattern
+
+
+1) change linear regression to STD
+2) add abnormal/normal label to data
+3) graph show fit of normal data and abnormal data on the side
+4) change demo to profile demo ~ 5 profiles
