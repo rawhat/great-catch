@@ -37,12 +37,10 @@ $(document).ready(function(){
 			"occupation": "Student",
 			"steps":[1139, 1400, 1211, 1310, 1499, 1257, 1510, 1303, 1215, 1244, 1550, 1220, 1120, 1220, 1200],
 			"stepsLabel": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			"stepSTD1": 1500,
-			"stepSTD2": 900,
+			"stepSTD": 20,
 			"heartRates":[69, 68, 68, 72, 70, 69, 68, 69, 71, 72, 69, 68, 68, 69, 71],
 			"heartRatesLabel":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			"heartRatesSTD1": 70,
-			"heartRatesSTD2": 60,
+			"heartRatesSTD": 11,
 			"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
 			"drug":"N/A",
 			"zip":19104
@@ -63,40 +61,17 @@ $(document).ready(function(){
 		var chart = $('#myChart');
 		$('#assessment').text('');
 		$('#assessment').removeClass('alert alert-info alert-warning');
-		var stepSTD1 = [];
-		var stepSTD2 = [];
-		for (var i = 0; i < data.steps.length; i++){
-			stepSTD1.push(data.stepSTD1);
-			stepSTD2.push(data.stepSTD2);
-		};
-		var heartRatesSTD1 = [];
-		var heartRatesSTD2 = [];
-		for (var i = 0; i < data.steps.length; i++){
-			heartRatesSTD1.push(data.heartRatesSTD1);
-			heartRatesSTD2.push(data.heartRatesSTD2);
-		};
 		var myChart = new Chart(chart, {
 			type: 'line',
 			data: {
+				type: 'line',
 				labels: data.date,
 				datasets: [{
 					label: 'Step Count',
 					data: data.steps,
 					backgroundColor: 'rgba(255, 99, 132, 0.2)',
 					fill: false,
-					pointDotRadius: 10
-				},{
-					label: 'Step Count + 1 STD',
-					data: stepSTD1,
-					backgroundColor: 'rgba(54, 162, 235, 1)',
-					fill: false,
-					pointDotRadius: 10
-				},{
-					label: 'Step Count - 1 STD',
-					data: stepSTD2,
-					backgroundColor: 'rgba(255,99,132,1)',
-					fill: false,
-					pointDotRadius: 10
+					pointRadius: 2
 				}]
 			},
 			options: {
@@ -107,7 +82,7 @@ $(document).ready(function(){
 						},
 						scaleLabel: {
 							display: true,
-							labelString: 'Step Count (n) / Heart Rate (bpm)'
+							labelString: 'Step Count (n)'
 						}
 					}]
 				}
@@ -124,19 +99,7 @@ $(document).ready(function(){
 					data: data.heartRates,
 					backgroundColor: 'rgba(75, 192, 192, 0.2)',
 					fill: false,
-					pointDotRadius: 10
-				},{
-					label: 'Heart Rate + 1 STD',
-					data: heartRatesSTD1,
-					backgroundColor: 'rgba(255, 206, 86, 1)',
-					fill: false,
-					pointDotRadius: 10
-				},{
-					label: 'Heart Rate - 1 STD',
-					data: heartRatesSTD2,
-					backgroundColor: 'rgba(75, 192, 192, 1)',
-					fill: false,
-					pointDotRadius: 10
+					pointRadius: 2
 				}]
 			},
 			options: {
@@ -147,7 +110,7 @@ $(document).ready(function(){
 						},
 						scaleLabel: {
 							display: true,
-							labelString: 'Step Count (n) / Heart Rate (bpm)'
+							labelString: 'Heart Rate (bpm)'
 						}
 					}]
 				}

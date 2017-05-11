@@ -354,7 +354,6 @@ function heartRateCorrelationAlert(drug, std, drugName){
 	var stepMsg = "- your step counts decreased or stayed the same today compared to previous dates using sample standard deviation.";
 	// hard threshold for FDA drug, no reason for the number
 	var drugThreshold = 1000;
-	console.log(drug + " " + std)
 	if (drug >= drugThreshold && std === "1"){
 		return ( starter + drugMsg + " <br> AND <br> " + stepMsg);
 	}else if (drug >= drugThreshold && std !== "0"){
@@ -363,8 +362,6 @@ function heartRateCorrelationAlert(drug, std, drugName){
 		return ( nothing);
 	}else if (drug < drugThreshold && std === "1"){
 		return ( starter + stepMsg);
-	}else{
-		console.log("here")
 	}
 }
 
