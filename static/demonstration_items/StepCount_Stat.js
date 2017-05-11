@@ -10,7 +10,7 @@
 	
 
 	PROGRAM LOGIC - step count:
-	linear regression + mean absolute deviation + correlation	
+	sample standard deviation + mean absolute deviation + correlation	
 	
 	1) check size:
 		1.1) size == 1
@@ -21,8 +21,8 @@
 					1.2.1.1.1) "abnormal"
 					1.2.1.1.2) "normal"
 		1.3) size == 15
-			1.3.1) linear regression for both data with and without new data
-				1.3.1.1) new data slope < old data slope
+			1.3.1) sample standard deviation
+				1.3.1.1) difference > STD
 					1.3.1.1.1) correlation
 						1.3.1.1.1.1) weather
 						1.3.1.1.1.2) medicine
@@ -67,10 +67,10 @@ function calcMAD(data){
 /*
 	calculate linear regression
 	input: 
-		data: step count data
+		data: step or heart rate
 	output: 
 		regrObj.m: the slow attribute of the linearRegression return object
-*/
+
 function calcLinearRegr(data){
 	// create coordinate pairs
 	var xy = [];
@@ -84,6 +84,20 @@ function calcLinearRegr(data){
 	// return slope
 	return regrObj.m;
 }
+*/
+
+/*
+	calculate std
+	input:
+		data: step or heart rate
+	output:
+		std
+*/
+function stdCalc(data){
+	var std = stat.sampleStandardDeviation(data);
+	return std;
+}
+
 
 /*
 	determine step count case
@@ -97,18 +111,21 @@ function calcLinearRegr(data){
 */
 async function deterStepResult(originData, oldData){
 	
-	// get slope of old data
-	var oldSlope = calcLinearRegr(oldData);
-	// get slope of extended data
-	var newSlope = calcLinearRegr((originData.steps).slice(1));
+	// get std of old data
+	var std = stdCalc(oldData);
 	
-	// if new slope is equal or lower than old slope
-	if (newSlope < oldSlope){
+	var data = originData.steps;
+	var lastItem = data[data.length-1];
+	var differences = Math.abs(stat.mean(data) - lastItem);
+	
+	
+	// difference greater than STD
+	if (differences > std){
 		let weather = await weatherCheck(originData.zip);
 		let response = await drugCheck(originData.drug, weather);
 		return response;
 	}else{
-		return ("We have determined your step count today is NORMAL using linear regression.<br>- Your new data has a slope greater than equal to 0.");
+		return ("We have determined your step count today is NORMAL using sample standard deviation.<br>- Your new data is in range.");
 	}
 }
 
@@ -123,19 +140,28 @@ async function deterStepResult(originData, oldData){
 			- normal
 */
 async function deterHeartRateResult(originData, oldData){
+	// get std of old data
+	var std = stdCalc(oldData);
 	
-	// get slope of old data
-	var oldSlope = calcLinearRegr(oldData);
-	// get slope of extended data
-	var newSlope = calcLinearRegr((originData.heartRates).slice(1));
+	var data = originData.heartRates;
+	var lastItem = data[data.length-1];
+	var differences = Math.abs(stat.mean(data) - lastItem);
 	
-	// if new slope is greater, increased heart rate, something is wrong
-	if (newSlope > oldSlope){
-		let slope = calcLinearRegr((originData.steps).slice(1));
-		let response = await drugHeartRateCheck(originData.drug, slope);
+	// compare difference with std
+	if (differences > std){
+		// get std of old data
+		var data = originData.steps;
+		var lastItem = data[data.length-1];
+		var std = stdCalc(data.slice(-1));
+		var differences = Math.abs(stat.mean(data.slice(0, -1)) - lastItem);
+		let stepResult = 0;
+		if (differences > std){
+			stepResult = 1;
+		};
+		let response = await drugHeartRateCheck(originData.drug, stepResult);
 		return response;
 	}else{
-		return ("We have determined your heart rate today is NORMAL using linear regression.<br>- Your new data has a slope greater than or equal to 0.");
+		return ("We have determined your heart rate today is NORMAL using sample standard deviation.<br>- Your new data is in range.");
 	}
 }
 
@@ -261,13 +287,13 @@ async function drugCheck(drug, weather){
 	drug correlation using FDA API
 	input:
 		drug: medication name user take
-		slope: result from step count linear regression
+		std: std
 	output:
 		heartRateCorrelationAlert: a function that combine correlation alerts summary
 */
-async function drugHeartRateCheck(drug, slope){
+async function drugHeartRateCheck(drug, std){
 	if(drug.toUpperCase() === "N/A") {
-		return heartRateCorrelationAlert(0, slope, drug);
+		return heartRateCorrelationAlert(0, std, drug);
 	}
 	else {
 		var key = "kZ1dIlu9TyKAzlXidiBuejvdfXmQmLWpq2BF0wqY";
@@ -277,10 +303,10 @@ async function drugHeartRateCheck(drug, slope){
 
 		if(parsed.meta) {
 			var count = parsed.meta.results.total;
-			return heartRateCorrelationAlert(count, slope, drug);
+			return heartRateCorrelationAlert(count, std, drug);
 		}
 		else {
-			return heartRateCorrelationAlert(0, slope, drug);
+			return heartRateCorrelationAlert(0, std, drug);
 		}
 	}
 }
@@ -296,7 +322,7 @@ async function drugHeartRateCheck(drug, slope){
 */
 function stepCorrelationAlert(drug, weather, drugName){
 	var nothing = "We have found no reason why your step count DECREASED. We suggest you to take more action and do more walking.";
-	var starter = "We have found your step count today is ABNORMAL using linear regression and correlation. But we also found that: <br>";
+	var starter = "We have found your step count today is ABNORMAL using sample standard deviation and correlation. But we also found that: <br>";
 	var drugMsg = "- your medicine " + drugName + " might be making you FATIGUE by using FDA drug complaint database.<br> Here is a link to <a href=http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName + ' target="_blank">WEBMD</a>';
 	var weatherMsg = "- today's weather around your location is bad. There was either rain, snow, hail, thunderstorm, fog, tornado or combination of these.";
 	// hard threshold for FDA drug, no reason for the number
@@ -316,26 +342,29 @@ function stepCorrelationAlert(drug, weather, drugName){
 	correlation alert summary for heart rate
 	input:
 		drug: FDA drug api count for fatigue complain for a particular drug
-		slope: linear regression of step count
+		std: std compare result
 		drugName: brand name of the medication
 	output:
 		msg: combined message of findings
 */
-function heartRateCorrelationAlert(drug, slope, drugName){
+function heartRateCorrelationAlert(drug, std, drugName){
 	var nothing = "We have found no reason why your heart rate INCREASED. We suggest you visit your PCP.";
-	var starter = "We have found your heart rates today is ABNORMAL using linear regression and correlation. But we also found that: <br>";
+	var starter = "We have found your heart rates today is ABNORMAL using sample standard deviation and correlation. But we also found that: <br>";
 	var drugMsg = "- your medicine " + drugName + " might be causing HYPERTENSION by using FDA drug complaint database.<br> Here is a link to <a href=http://www.webmd.com/drugs/search.aspx?stype=drug&query=" + drugName + ' target="_blank">WEBMD</a>';
-	var stepMsg = "- your step counts decreased or stayed the same today compared to previous dates using linear regression.";
+	var stepMsg = "- your step counts decreased or stayed the same today compared to previous dates using sample standard deviation.";
 	// hard threshold for FDA drug, no reason for the number
 	var drugThreshold = 1000;
-	if (drug >= drugThreshold && slope <= 0){
+	console.log(drug + " " + std)
+	if (drug >= drugThreshold && std === "1"){
 		return ( starter + drugMsg + " <br> AND <br> " + stepMsg);
-	}else if (drug >= drugThreshold && slope > 0){
+	}else if (drug >= drugThreshold && std !== "0"){
 		return ( starter + drugMsg);
-	}else if (drug < drugThreshold && slope >= 0){
+	}else if (drug < drugThreshold && std !== "0"){
 		return ( nothing);
-	}else if (drug < drugThreshold && slope < 0){
+	}else if (drug < drugThreshold && std === "1"){
 		return ( starter + stepMsg);
+	}else{
+		console.log("here")
 	}
 }
 
