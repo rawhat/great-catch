@@ -356,14 +356,14 @@ class Dashboard extends Component {
                             <span className='pull-left'><strong>Emergency Contact(s)</strong></span>
                             <span className='pull-right' ref={(emergencyContacts) => this.emergencyContacts = emergencyContacts}>
                                 {this.state.caretakers.length ? this.state.caretakers.join(', ') : 'None provided'}
-                                {this.state.editing ? <div className="btn btn-default" onClick={this.toggleAddingCaretaker}>Add</div> : null}
+                                {this.state.editing ? <div style={{ marginLeft: 10 }} className="btn btn-default" onClick={this.toggleAddingCaretaker}>Add</div> : null}
                                 <Modal
                                     isOpen={this.state.addingCaretaker}
-                                    style={{ content: { width: '40%', margin: '0 auto' }}}
+                                    style={{ content: { width: '40%', margin: '75px auto 0 auto', height: '75vh' }}}
                                     shouldCloseOnOverlayClick={false}
                                     onRequestClose={this.toggleAddingCaretaker}
                                     contentLabel='Add Caretaker'>
-                                    <div>
+                                    <div className='form-content'>
                                         <div className="btn btn-danger" onClick={this.toggleAddingCaretaker}>Close</div>
                                         <h2>Adding a Caretaker</h2>
                                         <div className="input-group">
@@ -387,14 +387,14 @@ class Dashboard extends Component {
                             <span className='pull-left'><strong>Medicine(s)</strong></span>
                             <span className='pull-right' ref={(medicines) => this.medicines = medicines}>
                                 {this.state.medicines.length ? this.state.medicines.join(', ') : 'None provided'}
-                                {this.state.editing ? <div className="btn btn-default" onClick={this.toggleAddingMedicine}>Add</div> : null}
+                                {this.state.editing ? <div style={{ marginLeft: 10 }} className="btn btn-default" onClick={this.toggleAddingMedicine}>Add</div> : null}
                                 <Modal
                                     isOpen={this.state.addingMedicine}
-                                    style={{ content: { width: '40%', margin: '0 auto' }}}
+                                    style={{ content: { width: '40%', margin: '75px auto 0 auto', height: '75vh' }}}
                                     shouldCloseOnOverlayClick={false}
                                     onRequestClose={this.toggleAddingMedicine}
                                     contentLabel='Add Medicine'>
-                                    <div>
+                                    <div className='form-content'>
                                         <div className="btn btn-danger" onClick={this.toggleAddingMedicine}>Close</div>
                                         <h2>Adding a Medicine</h2>
                                         <div className="input-group">
