@@ -5,7 +5,7 @@ const makeDBQuery = async ({ queryString, object }) => {
     let session = driver.session();
     try {
         let response = await session.run(queryString, object);
-        console.log(response);
+        // console.log(response);
         session.close();
         return { records: response.records };
     }

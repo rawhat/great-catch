@@ -269,7 +269,7 @@ async function main() {
                 ${user.caretakers.map(caretaker => {
                     return `CREATE (u)-[:HAS]->(c:Caretaker { role: "${caretaker.role}", email: "${caretaker.email}"${caretaker.phone ? `, phone: "${caretaker.phone}"` : ''} })`;
                 }).join('\n')}
-                CREATE (u)-[:GENERATED]->(d:Data { steps: [${userData.steps.join(', ')}], heartRates: [${userData.heartRates.join(', ')}]})
+                CREATE (u)-[:GENERATED]->(d:Data { stepCounts: [${userData.steps.join(', ')}], heartRates: [${userData.heartRates.join(', ')}]})
                 ${userData.drug !== 'N/A' ? `CREATE (u)-[:TAKES]->(:Medicine { name: "${userData.drug}", dosage: "lots", frequency: "often", additionalInstructions: [], sideEffects: []})` : ''}
                 RETURN u;
             `;

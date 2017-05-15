@@ -18,6 +18,7 @@ const schema = `
 		supportRequests: [UserSupportRequest!]
 		medicines: [UserMedicine!]
 		alerts: [Alert!]
+		data: UserData
 		createdAt: String!
 		updatedAt: String!
 		deviceModel: String
@@ -87,6 +88,17 @@ const schema = `
 		sideEffects: [String!]
 	}
 
+	type UserData {
+		id: Int!
+		stepCounts: [Int!]
+		heartRates: [Int!]
+	}
+
+	input InputUserData {
+		stepCount: Int!
+		heartRate: Int!
+	}
+
 	type Query {
 		user(username: String!): User
 		users: [User]
@@ -97,6 +109,7 @@ const schema = `
 		addCaretaker(username: String!, caretaker: InputCaretaker!): UserCaretaker
 		addAlert(username: String!, alert: InputAlert!): Alert
 		addSupportRequest(username: String!, supportRequest: InputSupportRequest!): UserSupportRequest
+		addUserData(username: String!, data: InputUserData!): UserData
 		updateUser(username: String!, updateUser: UpdateUser): User
 	}
 `;

@@ -272,11 +272,6 @@ router.get('/user/:id/profile', async (ctx) => {
     }
 });
 
-router.get('/user/data', async (ctx) => {
-
-    ctx.body = 'test';
-});
-
 router.get('/api/fitbit/test', jwt, async (ctx) => {
     if(ctx.session.access_token) {
         ctx.body = true;

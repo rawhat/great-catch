@@ -38,24 +38,17 @@ class Login extends Component {
 
     render = () => {
         return (
-            /*<table>
-                <tbody>
-                    <tr>
-                        <th>Username </th>
-                        <th>Password </th>
-                    </tr>
-                    <tr>
-                        <th><input style={{ margin: '10px 0px' }} type="text" ref={(username) => this.usernameInput = username} /></th>
-                        <th><input type="password" ref={(password) => this.passwordInput = password} /> </th>
-                    </tr>
-                    <tr>
-                        <th colSpan="2"> <input type="submit" value="Log In" onClick={this.login} /> </th>
-                    </tr>
-                    {this.state.error ? <tr><td>{this.state.error}</td></tr> : null}
-                </tbody>
-            </table>*/
             <div className="container-fluid">
-                <div className="well login-well">
+                <nav className="navbar navbar-default navbar-fixed-top">
+                    <div className="container-fluid clearfix">
+                        <div className="navbar-header">
+                            <a href='/'>
+                                <img src="/img/logo.png" alt="" height='50px' width='auto' style={{ padding: 5, margin: '0 auto' }}/>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                <div className="well login-well home-panel form-content" style={{ marginTop: 75 }}>
                     <h2>Log in to GreatCatch</h2>
                     <div className="input-group">
                         <span className="input-group-addon">Username</span>

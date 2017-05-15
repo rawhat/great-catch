@@ -18,6 +18,36 @@ body {
   font-family: 'Titillium Web', sans-serif;
 }
 
+.content {
+  margin-top: 75px;
+}
+
+.home-panel {
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-panel > a.btn {
+  margin: 5px;
+}
+
+.signup-content {
+  width: 50%;
+  margin: 75px auto 0 auto;
+  text-align: center;
+}
+
+.form-content > .input-group {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.form-content > .input-group > .input-group-addon {
+  min-width: 150px;
+  text-align: left;
+}
+
 a {
   text-decoration: none;
   color: #1ab188;
@@ -74,7 +104,7 @@ a:hover {
   display: none;
 }
 
-h1 {
+/*h1 {
   text-align: center;
   color: #ffffff;
   font-weight: 300;
@@ -182,7 +212,7 @@ textarea {
 .forgot {
   margin-top: -20px;
   text-align: right;
-}
+}*/
 
 #footer {
     padding: 1em;

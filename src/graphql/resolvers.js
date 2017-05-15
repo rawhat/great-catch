@@ -141,17 +141,37 @@ const resolvers = {
 			let { username, updateUser } = args;
 			let object = Object.assign({}, updateUser, { username });
 
-			let { records, error } = await makeDBQuery({ queryString: `
-				MATCH (u:User) WHERE u.username = {username}
-				SET u.firstName = {firstName},
-					u.lastName = {lastName},
-					u.email = {email}
-				RETURN u as user;
-			`,
-			object
-		});
+			let { records, error } = await makeDBQuery({ 
+				queryString: `
+					MATCH (u:User) WHERE u.username = {username}
+					SET u.firstName = {firstName},
+						u.lastName = {lastName},
+						u.email = {email}
+					RETURN u as user;
+				`,
+				object
+			});
 		
-		return records[0].get('user').properties;
+			return records[0].get('user').properties;
+		},
+		async addUserData(root, args) {
+			let { username, data } = args;
+			let { stepCount, heartRate } = data;
+			let object = { username, stepCount, heartRate };
+
+			let { records, error } = await makeDBQuery({
+				queryString: `
+					MATCH (u:User)-[:GENERATED]-(d:Data)
+					WHERE u.username = {username}
+					SET 
+						d.stepCounts = d.stepCounts + {stepCount}
+						d.heartRates = d.heartRates + {heartRate}
+					RETURN d AS data;
+				`,
+				object
+			});
+
+			return records[0].get('data').properties;
 		}
 	},
 	User: {
@@ -231,6 +251,25 @@ const resolvers = {
 				});
 			else
 				return [];
+		},
+		async data(obj) {
+			let { username } = obj;
+			let { records, error } = await doNestedQuery({
+				queryString: `
+					MATCH (u:User)-[:GENERATED]-(d:Data)
+					WHERE u.username = {username}
+					RETURN d AS data, ID(d) AS dataId
+				`,
+				object: { username }
+			});
+
+			if(records.length) {
+				let record = records[0];
+				return Object.assign({}, record.get('data').properties, { id: record.get('dataId') });
+			}
+			else {
+				return [];
+			}
 		}
 	}
 };

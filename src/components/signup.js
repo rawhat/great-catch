@@ -53,7 +53,16 @@ class SignUp extends Component {
     render = () => {
         return (
             <div className="container-fluid">
-                <div className="well signup-well">
+                <nav className="navbar navbar-default navbar-fixed-top">
+                    <div className="container-fluid clearfix">
+                        <div className="navbar-header">
+                            <a href='/'>
+                                <img src="/img/logo.png" alt="" height='50px' width='auto' style={{ padding: 5, margin: '0 auto' }}/>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                <div className="well signup-well content signup-content form-content">
                     <h2>Sign up to GreatCatch</h2>
                     <div className="input-group">
                         <span className="input-group-addon">First name</span>

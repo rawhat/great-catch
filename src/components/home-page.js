@@ -13,24 +13,28 @@ class HomePage extends Component {
     render = () => {
         return (
             <div id="container">
-                <div id="header"> 
-                    <img id="logo" src="/img/logo.png"/> 
-                    <div id="navi">
-                        <a className='btn btn-primary' href="/login">
+                <nav className="navbar navbar-default navbar-fixed-top">
+                    <div className="container-fluid clearfix">
+                        <div className="navbar-header">
+                            <a href='/'>
+                                <img src="/img/logo.png" alt="" height='50px' width='auto' style={{ padding: 5, margin: '0 auto' }}/>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                <div className='content'>
+                    <div className="well well-lg home-panel">
+                        <h1>Develop a professional way to monitor your health. </h1>
+                        <a className='btn btn-success' href="/login">
                             Log In
                         </a>
-                        <a className='btn btn-danger' href='/signup'>
-                            Sign In
+                        <a className='btn btn-info' href='/signup'>
+                            Sign Up
                         </a>
                     </div>
-                </div>
-                <div id="main">
-                    <div id="slogon">
-                        <h1>Develop a professional way to monitor your health. </h1>
+                    <div id="footer">
+                        Copyright &copy; GreatCatch.com
                     </div>
-                </div>
-                <div id="footer">
-                    Copyright &copy; GreatCatch.com
                 </div>
             </div>
         );

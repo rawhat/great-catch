@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
+import _ from 'lodash';
 import Chart from 'chart.js';
 import axios from 'axios';
 import Modal from 'react-modal';
@@ -20,8 +21,15 @@ class Dashboard extends Component {
             lastName: '',
             email: '',
             medicines: [],
-            caretakers: []
+            caretakers: [],
+            stepCounts: [],
+            heartRates: []
         };
+    }
+
+    componentWillMount = () => {
+        this.getUserProfile();
+        this.getAccessToken();
     }
 
     changeEditStatus = () => {
@@ -141,11 +149,6 @@ class Dashboard extends Component {
         }
     }
 
-    componentWillMount = () => {
-        this.getUserProfile();
-        this.getAccessToken();
-    }
-
     headerObject = () => {
         return { Authorization: `Bearer ${sessionStorage.getItem('token')}` };
     }
@@ -163,6 +166,10 @@ class Dashboard extends Component {
                     caretakers {
                         email
                     }
+                    data {
+                        stepCounts
+                        heartRates
+                    }
                 }
             }
         `;
@@ -170,13 +177,17 @@ class Dashboard extends Component {
         let response = await this.makeGraphQLQuery(graphqlQuery);
 
         if(response.status === 200) {
-            let { firstName, lastName, email, medicines, caretakers } = response.data.data.user;
+            let { firstName, lastName, email, medicines, caretakers, data } = response.data.data.user;
             this.setState({
                 firstName,
                 lastName,
                 email,
                 medicines: medicines.map(medicine => medicine.name),
-                caretakers: caretakers.map(caretaker => caretaker.email)
+                caretakers: caretakers.map(caretaker => caretaker.email),
+                stepCounts: data.stepCounts.map(Number),
+                heartRates: data.heartRates.map(Number)
+            }, () => {
+                this.drawChart();
             });
         }
         else {
@@ -210,22 +221,67 @@ class Dashboard extends Component {
         this.drawChart(response.data);
     }
 
-    drawChart = (data) => {
-        var chartData = data['activities-steps'];
-        this.barChart = new Chart(this.chart, {
-            type: 'bar',
+    drawChart = () => {
+        let labels = _.range(0, this.state.stepCounts.length).reverse().map(index => {
+            let newDate = new Date();
+            newDate = new Date(newDate.setDate(newDate.getDate() - index));
+            return newDate.toDateString();
+        });
+
+        this.lineChart = new Chart(this.chart, {
+            type: 'line',
             data: {
-                labels: chartData.map(point => point.dateTime),
-                datasets: [{
-                    label: 'Activities: Steps',
-                    data: chartData.map(point => point.value)
-                }]
+                labels,
+                datasets: [
+                    {
+                        label: 'Step Count',
+                        data: this.state.stepCounts,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: false,
+                        pointDotRadius: 10
+                    },
+                    // {
+                    //     label: 'Step Count',
+                    //     data: this.state.stepCounts.slice(1),
+                    //     backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    //     fill: false,
+                    //     pointDotRadius: 10
+                    // },
+                    {
+                        label: 'Heart Rate',
+                        data: this.state.heartRates,
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        fill: false,
+                        pointDotRadius: 10
+                    }
+                    // {
+                    //     label: 'Heart Rate',
+                    //     data: this.state.heartRates.slice(1),
+                    //     backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    //     fill: false,
+                    //     pointDotRadius: 10
+                    // }
+                ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
+				// scales: {
+				// 	yAxes: [{
+				// 		ticks: {
+				// 			beginAtZero:true,
+				// 			max: (Math.max(this.state.stepCounts)) + 200
+				// 		},
+				// 		scaleLabel: {
+				// 			display: true,
+				// 			labelString: 'Step Count (n) / Heart Rate (bpm)'
+				// 		}
+				// 	}]
+				// },
+                maintainAspectRatio: false,
+                responsive: true
+			}
         });
+
+        this.lineChart.update();
     }
 
     signOut = () => {
@@ -238,150 +294,156 @@ class Dashboard extends Component {
 
     render = () => {
         return (
-            <div id="container">
-                <div id="header"> 
-                    <img id="logo" src="/img/logo.png"/> 
-                    <div id="navi">
-                        <a href="#" className='btn btn-warning' onClick={this.signOut}>Sign Out</a>
+            <div className="container-fluid">
+                <nav className="navbar navbar-default navbar-fixed-top">
+                    <div className="container-fluid clearfix">
+                        <div className="navbar-header">
+                            <img src="/img/logo.png" alt="" height='50px' width='auto' style={{ padding: 5, margin: '0 auto' }}/>
+                        </div>
+                        <a href="#" className='btn btn-warning navbar-btn navbar-right' onClick={this.signOut}>Sign Out</a>
                     </div>
-                </div>
-        
-                <div id="profileBody">
-                    <div id="banner">
-                        <h2>Welcome, <span id="userName">{this.state.username}</span></h2>
-                </div>
-                    
-                <table id="infoTable" style={{ margin: '0 auto' }}>
-                    <tbody>
-                        <tr>
-                    <th>First Name:</th>
-                        {this.state.editing ? 
-                            <input type='text' ref={(firstName) => this.firstName = firstName} defaultValue={this.state.firstName} />
-                        :   <td ref={(firstName) => this.firstName = firstName}>{this.state.firstName}</td>}
-                    </tr>
-                    <tr>
-                        <th>Last Name:</th>
-                        {this.state.editing ? 
-                            <input type='text' ref={(lastName) => this.lastName = lastName} defaultValue={this.state.lastName} />
-                        :   <td ref={(lastName) => this.lastName = lastName}>{this.state.lastName}</td>}
-                    </tr>
-                    <tr>
-                        <th>Email Address:</th>
-                        {this.state.editing ? 
-                            <input type='text' ref={(emailAddress) => this.emailAddress = emailAddress} defaultValue={this.state.email} />
-                        :   <td ref={(emailAddress) => this.emailAddress = emailAddress}>{this.state.email}</td>}
-                    </tr>
-                    <tr>
-                        <th>Emergency Contact(s):</th>
-                        <td ref={(emergencyContacts) => this.emergencyContacts = emergencyContacts}>
-                            {this.state.caretakers.length ? this.state.caretakers.join(', ') : 'None provided'}
-                            {this.state.editing ? <div className="btn btn-default" onClick={this.toggleAddingCaretaker}>Add</div> : null}
-                            <Modal
-                                isOpen={this.state.addingCaretaker}
-                                style={{ content: { width: '40%', margin: '0 auto' }}}
-                                shouldCloseOnOverlayClick={false}
-                                onRequestClose={this.toggleAddingCaretaker}
-                                contentLabel='Add Caretaker'>
-                                <div>
-                                    <div className="btn btn-danger" onClick={this.toggleAddingCaretaker}>Close</div>
-                                    <h2>Adding a Caretaker</h2>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Role</span>
-                                        <input type="text" className="form-control" ref={(caretakerRole) => this.caretakerRole = caretakerRole} />
-                                    </div>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Email</span>
-                                        <input type="text" className="form-control" ref={(caretakerEmail) => this.caretakerEmail = caretakerEmail} />
-                                    </div>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Phone</span>
-                                        <input type="text" className="form-control" placeholder='Optional' ref={(caretakerPhone) => this.caretakerPhone = caretakerPhone} />
-                                    </div>
-                                    <button className="btn btn-success" onClick={this.addCaretaker}>Add Caretaker</button>
-                                </div>
-                            </Modal>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Medicine(s):</th>
-                        <td ref={(medicines) => this.medicines = medicines}>
-                            {this.state.medicines.length ? this.state.medicines.join(', ') : 'None provided'}
-                            {this.state.editing ? <div className="btn btn-default" onClick={this.toggleAddingMedicine}>Add</div> : null}
-                            <Modal
-                                isOpen={this.state.addingMedicine}
-                                style={{ content: { width: '40%', margin: '0 auto' }}}
-                                shouldCloseOnOverlayClick={false}
-                                onRequestClose={this.toggleAddingMedicine}
-                                contentLabel='Add Medicine'>
-                                <div>
-                                    <div className="btn btn-danger" onClick={this.toggleAddingMedicine}>Close</div>
-                                    <h2>Adding a Medicine</h2>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Name</span>
-                                        <input type="text" className="form-control" ref={(medicineName) => this.medicineName = medicineName} />
-                                    </div>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Dosage</span>
-                                        <input type="text" className="form-control" ref={(medicineDosage) => this.medicineDosage = medicineDosage} />
-                                    </div>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Frequency</span>
-                                        <input type="text" className="form-control" ref={(medicineFrequency) => this.medicineFrequency = medicineFrequency} />
-                                    </div>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Additional Instructions</span>
-                                        <input type="text" className="form-control" ref={(medicineAdditionalInstructions) => this.medicineAdditionalInstructions = medicineAdditionalInstructions} />
-                                    </div>
-                                    <div className="input-group">
-                                        <span className="input-group-addon">Side Effects</span>
-                                        <input type="text" className="form-control" ref={(medicineSideEffects) => this.medicineSideEffects = medicineSideEffects} />
-                                    </div>
-                                    <button className="btn btn-success" onClick={this.addMedicine}>Add Medicine</button>
-                                </div>
-                            </Modal>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                </nav>
 
-                <div className="row" style={{ textAlign: 'center' }}>
-                        {this.state.editing ? 
-                            <div className="btn btn-success" onClick={this.editProfile} style={{ margin: 20 }}>Save Changes</div>
-                        :   <div className="btn btn-warning" onClick={this.changeEditStatus} style={{ margin: 20 }}>Edit Profile</div>
-                        }
-                        {!this.state.access_token ?
-                            <a href='/auth/fitbit' className='btn btn-primary' style={{ margin: 20 }}>Authorize FitBit</a>
-                        : null}
-                </div>
-                <div id="userInput">
-                    <select  name="fitbit_dataType" ref={(dataType) => this.dataType = dataType}>
-                        <option value="heart_rate">Heart Rate</option>
-                        <option value="calories">Calories</option>
-                        <option value="steps">Steps</option>
-                        <option value="distance">Distance</option>
-                    </select>
-                
-                    <select name="range" ref={(dateRange) => this.dateRange = dateRange}>
-                        <option value="5_min">5 minutes</option>
-                        <option value="30_min">30 minutes</option>
-                        <option value="6_h">6 hours</option>
-                        <option value="1_d">1 day</option>
-                        <option value="15_d">15 day</option>
-                    </select>
-                
-                    <input type="date" name="selected_date" ref={(selectedDate) => this.selectedDate = selectedDate}/>
-                    
-                    <button id="request_fitbit_data" type="button" onClick={this.getFitbitData} >Submit</button>
-                </div>
-                
-                <div className='chart-container'>
-                    <div>
-                        <canvas className='profile-chart' width="400" height="400" ref={(chart) => this.chart = chart}></canvas>
+                <div className='content'>
+                    <div id="profileBody">
+                        <div id="banner">
+                            <h2>Welcome, <span id="userName">{this.state.username}</span></h2>
                     </div>
-                </div>
-                </div>
-                <div id="footer">
-                    Copyright &copy; GreatCatch.com
+                        
+                    <div className='list-group' style={{ margin: '0 auto', width: '40%' }}>
+                        <div className="list-group-item clearfix">
+                            <span className='pull-left'><strong>First Name</strong></span>
+                            <span className="pull-right">{this.state.editing ? 
+                                    <input type='text' ref={(firstName) => this.firstName = firstName} defaultValue={this.state.firstName} />
+                                :   <span ref={(firstName) => this.firstName = firstName}>{this.state.firstName}</span>}
+                            </span>
+                        </div>
+                        <div className='list-group-item clearfix'>
+                            <span className='pull-left'><strong>Last Name</strong></span>
+                            <span className="pull-right">{this.state.editing ? 
+                                <input type='text' ref={(lastName) => this.lastName = lastName} defaultValue={this.state.lastName} />
+                            :   <span ref={(lastName) => this.lastName = lastName}>{this.state.lastName}</span>}
+                            </span>
+                        </div>
+                        <div className='list-group-item clearfix'>
+                            <span className='pull-left'><strong>Email Address</strong></span>
+                            <span className="pull-right">{this.state.editing ? 
+                                <input type='text' ref={(emailAddress) => this.emailAddress = emailAddress} defaultValue={this.state.email} />
+                            :   <span ref={(emailAddress) => this.emailAddress = emailAddress}>{this.state.email}</span>}
+                            </span>
+                        </div>
+                        <div className='list-group-item clearfix'>
+                            <span className='pull-left'><strong>Emergency Contact(s)</strong></span>
+                            <span className='pull-right' ref={(emergencyContacts) => this.emergencyContacts = emergencyContacts}>
+                                {this.state.caretakers.length ? this.state.caretakers.join(', ') : 'None provided'}
+                                {this.state.editing ? <div className="btn btn-default" onClick={this.toggleAddingCaretaker}>Add</div> : null}
+                                <Modal
+                                    isOpen={this.state.addingCaretaker}
+                                    style={{ content: { width: '40%', margin: '0 auto' }}}
+                                    shouldCloseOnOverlayClick={false}
+                                    onRequestClose={this.toggleAddingCaretaker}
+                                    contentLabel='Add Caretaker'>
+                                    <div>
+                                        <div className="btn btn-danger" onClick={this.toggleAddingCaretaker}>Close</div>
+                                        <h2>Adding a Caretaker</h2>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Role</span>
+                                            <input type="text" className="form-control" ref={(caretakerRole) => this.caretakerRole = caretakerRole} />
+                                        </div>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Email</span>
+                                            <input type="text" className="form-control" ref={(caretakerEmail) => this.caretakerEmail = caretakerEmail} />
+                                        </div>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Phone</span>
+                                            <input type="text" className="form-control" placeholder='Optional' ref={(caretakerPhone) => this.caretakerPhone = caretakerPhone} />
+                                        </div>
+                                        <button className="btn btn-success" onClick={this.addCaretaker}>Add Caretaker</button>
+                                    </div>
+                                </Modal>
+                            </span>
+                        </div>
+                        <div className='list-group-item clearfix'>
+                            <span className='pull-left'><strong>Medicine(s)</strong></span>
+                            <span className='pull-right' ref={(medicines) => this.medicines = medicines}>
+                                {this.state.medicines.length ? this.state.medicines.join(', ') : 'None provided'}
+                                {this.state.editing ? <div className="btn btn-default" onClick={this.toggleAddingMedicine}>Add</div> : null}
+                                <Modal
+                                    isOpen={this.state.addingMedicine}
+                                    style={{ content: { width: '40%', margin: '0 auto' }}}
+                                    shouldCloseOnOverlayClick={false}
+                                    onRequestClose={this.toggleAddingMedicine}
+                                    contentLabel='Add Medicine'>
+                                    <div>
+                                        <div className="btn btn-danger" onClick={this.toggleAddingMedicine}>Close</div>
+                                        <h2>Adding a Medicine</h2>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Name</span>
+                                            <input type="text" className="form-control" ref={(medicineName) => this.medicineName = medicineName} />
+                                        </div>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Dosage</span>
+                                            <input type="text" className="form-control" ref={(medicineDosage) => this.medicineDosage = medicineDosage} />
+                                        </div>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Frequency</span>
+                                            <input type="text" className="form-control" ref={(medicineFrequency) => this.medicineFrequency = medicineFrequency} />
+                                        </div>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Additional Instructions</span>
+                                            <input type="text" className="form-control" ref={(medicineAdditionalInstructions) => this.medicineAdditionalInstructions = medicineAdditionalInstructions} />
+                                        </div>
+                                        <div className="input-group">
+                                            <span className="input-group-addon">Side Effects</span>
+                                            <input type="text" className="form-control" ref={(medicineSideEffects) => this.medicineSideEffects = medicineSideEffects} />
+                                        </div>
+                                        <button className="btn btn-success" onClick={this.addMedicine}>Add Medicine</button>
+                                    </div>
+                                </Modal>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="row" style={{ textAlign: 'center', marginLeft: 0, marginRight: 0 }}>
+                            {this.state.editing ? 
+                                <div className="btn btn-success" onClick={this.editProfile} style={{ margin: 20 }}>Save Changes</div>
+                            :   <div className="btn btn-warning" onClick={this.changeEditStatus} style={{ margin: 20 }}>Edit Profile</div>
+                            }
+                            {!this.state.access_token ?
+                                <a href='/auth/fitbit' className='btn btn-primary' style={{ margin: 20 }}>Authorize FitBit</a>
+                            : null}
+                    </div>
+                    {/*
+                    <div id="userInput">
+                        <select  name="fitbit_dataType" ref={(dataType) => this.dataType = dataType}>
+                            <option value="heart_rate">Heart Rate</option>
+                            <option value="calories">Calories</option>
+                            <option value="steps">Steps</option>
+                            <option value="distance">Distance</option>
+                        </select>
+                    
+                        <select name="range" ref={(dateRange) => this.dateRange = dateRange}>
+                            <option value="5_min">5 minutes</option>
+                            <option value="30_min">30 minutes</option>
+                            <option value="6_h">6 hours</option>
+                            <option value="1_d">1 day</option>
+                            <option value="15_d">15 day</option>
+                        </select>
+                    
+                        <input type="date" name="selected_date" ref={(selectedDate) => this.selectedDate = selectedDate}/>
+                        
+                        <button id="request_fitbit_data" type="button" onClick={this.getFitbitData} >Submit</button>
+                    </div>*/}
+                    
+                    <div className='chart-container'>
+                        <div>
+                            <canvas className='profile-chart' width="800" height="600" ref={(chart) => this.chart = chart}></canvas>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="footer">
+                        Copyright &copy; GreatCatch.com
+                    </div>
                 </div>
             </div>
         );
