@@ -11,7 +11,9 @@ class SignUp extends Component {
         };
     }
 
-    signUp = async () => {
+    signUp = async (ev) => {
+        if(ev) ev.preventDefault();
+
         try {
             let usernameInput = this.username.value;
             let firstName = this.firstName.value;
@@ -62,7 +64,7 @@ class SignUp extends Component {
                         </div>
                     </div>
                 </nav>
-                <div className="well signup-well content signup-content form-content">
+                <form className="well signup-well content signup-content form-content" onSubmit={this.signUp}>
                     <h2>Sign up to GreatCatch</h2>
                     <div className="input-group">
                         <span className="input-group-addon">First name</span>
@@ -88,8 +90,8 @@ class SignUp extends Component {
                         <span className="input-group-addon">Password Repeat</span>
                         <input type="password" className="form-control" ref={(passwordRepeat) => this.passwordRepeat = passwordRepeat} />
                     </div>
-                    <a href="#" className="btn btn-primary" onClick={this.signUp}>Sign Up</a>
-                </div>
+                    <button type='submit' className="btn btn-primary" onClick={this.signUp}>Sign Up</button>
+                </form>
             </div>
         );
     }

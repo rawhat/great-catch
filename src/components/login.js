@@ -11,7 +11,8 @@ class Login extends Component {
         };
     }
 
-    login = async () => {
+    login = async (ev) => {
+        if(ev) ev.preventDefault();
         try {
             let response = await axios.post('/login', {
                 username: this.usernameInput.value,
@@ -48,7 +49,7 @@ class Login extends Component {
                         </div>
                     </div>
                 </nav>
-                <div className="well login-well home-panel form-content" style={{ marginTop: 75 }}>
+                <form className="well login-well home-panel form-content" style={{ marginTop: 75 }} onSubmit={this.login}>
                     <h2>Log in to GreatCatch</h2>
                     <div className="input-group">
                         <span className="input-group-addon">Username</span>
@@ -58,9 +59,9 @@ class Login extends Component {
                         <span className="input-group-addon">Password</span>
                         <input type="password" className="form-control" ref={(password) => this.passwordInput = password} />
                     </div>
-                    <a className='btn btn-primary' href='#' onClick={this.login}>Login</a>
+                    <button type='submit' className='btn btn-primary' onClick={this.login}>Login</button>
                     {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
-                </div>
+                </form>
             </div>
         );
     }
