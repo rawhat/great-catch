@@ -14,6 +14,7 @@ const schema = `
 		age: Int!
 		email: String!
 		phone: String
+		zipCode: Int
 		caretakers: [UserCaretaker]
 		supportRequests: [UserSupportRequest!]
 		medicines: [UserMedicine!]

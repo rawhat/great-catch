@@ -103,6 +103,7 @@ const users = {
         lastName: 'smith',
         email: 'john.smith@gmail.com',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'son',
             email: 'bill.smith@gmail.com',
@@ -115,6 +116,7 @@ const users = {
         lastName: 'monroe',
         email: 'abby.monroe@gmail.com',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'cousin',
             email: 'diane.callahan@gmail.com',
@@ -127,6 +129,7 @@ const users = {
         lastName: 'drumpf',
         email: 'donald.drumpf@whitehouse.gov',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'daughter',
             email: 'ivanka.drumpf@gmail.com',
@@ -139,6 +142,7 @@ const users = {
         lastName: 'geraldo',
         email: 'harold.geraldo@gmail.com',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'friend',
             email: 'not1person@gmail.com',
@@ -151,6 +155,7 @@ const users = {
         lastName: 'white',
         email: 'betty.white1@gmail.com',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'nurse',
             email: 'buddy.brown@gmail.com',
@@ -163,6 +168,7 @@ const users = {
         lastName: 'farnsworth',
         email: 'mad.scientist@planetexpress.com',
         password: 'password',
+        zipCode: 98104,
         caretakers: [{
             role: 'ex-wife',
             email: 'mom@moms.com',
@@ -175,6 +181,7 @@ const users = {
         lastName: 'fry',
         email: 'fry@planetexpress.com',
         password: 'password',
+        zipCode: 98104,
         caretakers: [{
             role: 'dog',
             email: 'seymour@nyu.edu',
@@ -187,6 +194,7 @@ const users = {
         lastName: 'johnson',
         email: 'bj@ukip.co.uk',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'mistress',
             email: 'queen.bee@westminster.co.uk',
@@ -199,6 +207,7 @@ const users = {
         lastName: 'il sung',
         email: 'glorious.leader@motherland.nk',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'poolboy',
             email: 'juan.carlos@fbi.gov',
@@ -211,6 +220,7 @@ const users = {
         lastName: 'putin',
         email: 'poutine@kremlin.ru',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'undertaker',
             email: 'trotskys.corpse@exile.mx',
@@ -223,6 +233,7 @@ const users = {
         lastName: 'sanders',
         email: 'the.colonel@kfc.com',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'neighbor',
             email: 'wendy@wendys.com',
@@ -235,6 +246,7 @@ const users = {
         lastName: '9000',
         email: 'hal@spaceodyssey.com',
         password: 'password',
+        zipCode: 19104,
         caretakers: [{
             role: 'sister',
             email: 'helga@spacemeander.com',
@@ -247,6 +259,7 @@ const users = {
         lastName: 'dent',
         email: 'adent@pub.co.uk',
         password: 'password',
+        zipCode: 98104,
         caretakers: [{
             role: 'friend',
             email: 'ford.prefect@universe.uv',
@@ -265,7 +278,7 @@ async function main() {
 
             let session = driver.session();
             let str = `
-                CREATE (u:User { username: {username}, firstName: {firstName}, lastName: {lastName}, email: {email}, password: {password} }) WITH u
+                CREATE (u:User { username: {username}, firstName: {firstName}, lastName: {lastName}, email: {email}, password: {password}, zipCode: {zipCode} }) WITH u
                 ${user.caretakers.map(caretaker => {
                     return `CREATE (u)-[:HAS]->(c:Caretaker { role: "${caretaker.role}", email: "${caretaker.email}"${caretaker.phone ? `, phone: "${caretaker.phone}"` : ''} })`;
                 }).join('\n')}

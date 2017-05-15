@@ -23,7 +23,9 @@ class Dashboard extends Component {
             medicines: [],
             caretakers: [],
             stepCounts: [],
-            heartRates: []
+            heartRates: [],
+            analysis: '',
+            zipCode: -1
         };
     }
 
@@ -160,6 +162,7 @@ class Dashboard extends Component {
                     firstName
                     lastName
                     email
+                    zipCode
                     medicines {
                         name
                     }
@@ -177,7 +180,7 @@ class Dashboard extends Component {
         let response = await this.makeGraphQLQuery(graphqlQuery);
 
         if(response.status === 200) {
-            let { firstName, lastName, email, medicines, caretakers, data } = response.data.data.user;
+            let { firstName, lastName, email, medicines, caretakers, data, zipCode } = response.data.data.user;
             this.setState({
                 firstName,
                 lastName,
@@ -185,9 +188,11 @@ class Dashboard extends Component {
                 medicines: medicines.map(medicine => medicine.name),
                 caretakers: caretakers.map(caretaker => caretaker.email),
                 stepCounts: data.stepCounts.map(Number),
-                heartRates: data.heartRates.map(Number)
+                heartRates: data.heartRates.map(Number),
+                zipCode
             }, () => {
                 this.drawChart();
+                this.runAnalysis();
             });
         }
         else {
@@ -235,53 +240,60 @@ class Dashboard extends Component {
                 datasets: [
                     {
                         label: 'Step Count',
-                        data: this.state.stepCounts,
+                        data: this.state.stepCounts.slice(0, -1),
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         fill: false,
                         pointDotRadius: 10
                     },
-                    // {
-                    //     label: 'Step Count',
-                    //     data: this.state.stepCounts.slice(1),
-                    //     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    //     fill: false,
-                    //     pointDotRadius: 10
-                    // },
+                    {
+                        label: 'Step Count',
+                        data: this.state.stepCounts.slice(1),
+                        backgroundColor: 'rgba(255, 153, 0, 0.4)',
+                        fill: false,
+                        pointDotRadius: 10
+                    },
                     {
                         label: 'Heart Rate',
-                        data: this.state.heartRates,
+                        data: this.state.heartRates.slice(0, -1),
                         backgroundColor: 'rgba(153, 102, 255, 0.2)',
                         fill: false,
                         pointDotRadius: 10
+                    },
+                    {
+                        label: 'Heart Rate',
+                        data: this.state.heartRates.slice(1),
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        fill: false,
+                        pointDotRadius: 10
                     }
-                    // {
-                    //     label: 'Heart Rate',
-                    //     data: this.state.heartRates.slice(1),
-                    //     backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    //     fill: false,
-                    //     pointDotRadius: 10
-                    // }
                 ]
             },
             options: {
-				// scales: {
-				// 	yAxes: [{
-				// 		ticks: {
-				// 			beginAtZero:true,
-				// 			max: (Math.max(this.state.stepCounts)) + 200
-				// 		},
-				// 		scaleLabel: {
-				// 			display: true,
-				// 			labelString: 'Step Count (n) / Heart Rate (bpm)'
-				// 		}
-				// 	}]
-				// },
                 maintainAspectRatio: false,
                 responsive: true
 			}
         });
 
         this.lineChart.update();
+    }
+
+    runAnalysis = async () => {
+        let data = {
+            steps: this.state.stepCounts,
+            heartRates: this.state.heartRates,
+            drug: this.state.medicines.length ? this.state.medicines[0] : 'N/A',
+            zip: this.state.zipCode
+        };
+
+        try {
+            let response = await axios.post('/analysis/step', { data });
+            this.setState({
+                analysis: response.data
+            });
+        }
+        catch(err) {
+            console.error(err);
+        }
     }
 
     signOut = () => {
@@ -293,6 +305,14 @@ class Dashboard extends Component {
     }
 
     render = () => {
+        let analysisContent = null;
+        if(this.state.analysis) {
+            let alertClass = this.state.analysis.search('AND') === -1 ? 'alert-info' : 'alert-warning';
+            analysisContent = <div style={{ width: '50%', margin: '0 auto'}} >
+                <div className={`alert ${alertClass}`} dangerouslySetInnerHTML={{ __html: this.state.analysis }} />
+            </div>;
+        }
+
         return (
             <div className="container-fluid">
                 <nav className="navbar navbar-default navbar-fixed-top">
@@ -434,6 +454,10 @@ class Dashboard extends Component {
                         
                         <button id="request_fitbit_data" type="button" onClick={this.getFitbitData} >Submit</button>
                     </div>*/}
+
+                    <div className='alert-content'>
+                        {analysisContent}
+                    </div>
                     
                     <div className='chart-container'>
                         <div>
