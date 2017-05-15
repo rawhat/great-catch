@@ -251,7 +251,7 @@ class Dashboard extends Component {
                         <h2>Welcome, <span id="userName">{this.state.username}</span></h2>
                 </div>
                     
-                <table id="infoTable">
+                <table id="infoTable" style={{ margin: '0 auto' }}>
                     <tbody>
                         <tr>
                     <th>First Name:</th>

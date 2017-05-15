@@ -157,7 +157,7 @@ async function deterHeartRateResult(originData, oldData){
 		let stepResult = 0;
 		if (differences > std){
 			stepResult = 1;
-		};
+		}
 		let response = await drugHeartRateCheck(originData.drug, stepResult);
 		return response;
 	}else{
@@ -208,7 +208,7 @@ async function deterDataSize(data){
 		// heart rate
 		let parsedHeartRateData = parseData(heartRates);
 		let heartRateMsg = compareMAD(parsedHeartRateData[0], parsedHeartRateData[1]);
-		return ("Step Count " + stepMsg + " <br><br> " + "<br>Heart Rates " + stepMsg);
+		return ("Step Count " + stepMsg + " <br><br> " + "<br>Heart Rates " + heartRateMsg);
 	}else{
 		// step
 		let parsedStepData = parseData(steps);

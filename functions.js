@@ -1,12 +1,12 @@
 var neo4j = require('neo4j-driver').v1;
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'neo4j'));
 
 const makeDBQuery = async ({ queryString, object }) => {
-    const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'helloWorld'));
-    const session = driver.session();
+    let session = driver.session();
     try {
         let response = await session.run(queryString, object);
+        console.log(response);
         session.close();
-        driver.close();
         return { records: response.records };
     }
     catch (error) {
