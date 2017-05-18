@@ -95,7 +95,9 @@ function calcLinearRegr(data){
 */
 function stdCalc(data){
 	var std = stat.sampleStandardDeviation(data);
+	console.log(std);
 	return std;
+	
 }
 
 
@@ -116,11 +118,11 @@ async function deterStepResult(originData, oldData){
 	
 	var data = originData.steps;
 	var lastItem = data[data.length-1];
-	var differences = Math.abs(stat.mean(data) - lastItem);
+	var lowerBound = Math.abs(stat.mean(data) - std);
 	
 	
 	// difference greater than STD
-	if (differences > std){
+	if (lowerBound > lastItem){
 		let weather = await weatherCheck(originData.zip);
 		let response = await drugCheck(originData.drug, weather);
 		return response;
@@ -152,10 +154,10 @@ async function deterHeartRateResult(originData, oldData){
 		// get std of old data
 		var data = originData.steps;
 		var lastItem = data[data.length-1];
-		var std = stdCalc(data.slice(-1));
-		var differences = Math.abs(stat.mean(data.slice(0, -1)) - lastItem);
+		var std = stdCalc(data.slice(0, -1));
+		var lowerBound = Math.abs(stat.mean(data.slice(0, -1)) - std);
 		let stepResult = 0;
-		if (differences > std){
+		if (lowerBound > lastItem){
 			stepResult = 1;
 		}
 		let response = await drugHeartRateCheck(originData.drug, stepResult);
@@ -230,7 +232,7 @@ async function deterDataSize(data){
 */
 function parseData(data){
 	var oldData = data.slice(0, -1);
-	var newData = data.slice(-1)[0];
+	var newData = data[data.length-1];
 	
 	return [newData, oldData];
 }
@@ -354,14 +356,14 @@ function heartRateCorrelationAlert(drug, std, drugName){
 	var stepMsg = "- your step counts decreased or stayed the same today compared to previous dates using sample standard deviation.";
 	// hard threshold for FDA drug, no reason for the number
 	var drugThreshold = 1000;
-	if (drug >= drugThreshold && std === "1"){
+	if (drug >= drugThreshold && std == 1){
 		return ( starter + drugMsg + " <br> AND <br> " + stepMsg);
-	}else if (drug >= drugThreshold && std !== "0"){
+	}else if (drug >= drugThreshold && std == 0){
 		return ( starter + drugMsg);
-	}else if (drug < drugThreshold && std !== "0"){
-		return ( nothing);
-	}else if (drug < drugThreshold && std === "1"){
+	}else if (drug < drugThreshold && std == 1){
 		return ( starter + stepMsg);
+	}else if (drug < drugThreshold && std == 0){
+		return ( nothing);
 	}
 }
 

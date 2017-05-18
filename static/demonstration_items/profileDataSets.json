@@ -1,18 +1,80 @@
 data = {
-		"firstName": "Wenyu",
-		"lastName": "Xin",
-		"email": "wx28@drexel.edu",
-		"emergencyContact": "wenyu.xin@drexel.edu",
-		"occupation": "Student",
-		"steps":[1139, 1400, 1211, 1310, 1499, 1257, 1510, 1303, 1215, 1244, 1550, 1220, 1120, 1220, 1200],
-		"stepsLabel": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-		"stepSTD1": 1500,
-		"stepSTD2": 900,
-		"heartRates":[69, 68, 68, 72, 70, 69, 68, 69, 71, 72, 69, 68, 68, 69, 71],
-		"heartRatesLabel":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-		"heartRatesSTD1": 70,
-		"heartRatesSTD2": 60,
-		"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
-		"drug":"N/A",
-		"zip":19104
-};
+	"_COMMENTS": "NORMAL step, ABNORMAL heart rate w/ no reason",
+	"firstName": "Alex",
+	"lastName": "Manning",
+	"email": "Alex.Manning@drexel.edu",
+	"emergencyContact": "JohnManning@gmail.com",
+	"occupation": "Full-Stack Programmer",
+	"steps":[1139, 1400, 1211, 1310, 1499, 1257, 1510, 1303, 1215, 1244, 1550, 1220, 1120, 1220, 1200],
+	"stepSTD": 137.99,
+	"heartRates":[69, 68, 68, 72, 70, 69, 68, 69, 71, 72, 69, 68, 68, 69, 71],
+	"heartRatesSTD": 1.44,
+	"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
+	"drug":"N/A",
+	"zip":19104
+}; 
+
+data = {
+	"_COMMENTS": "ABNORMAL step w/ drug (letairis: pulmonary arterial hypertension drug that cause fatigue), NORMAL heart rate.",
+	"firstName": "Wenyu",
+	"lastName": "Xin",
+	"email": "wx28@drexel.edu",
+	"emergencyContact": "tq28@drexel.edu",
+	"occupation": "BS/MS Students",
+	"steps":[3501, 3621, 2980, 3049, 3300, 3409, 3489, 3390, 3449, 3509, 3399, 3479, 3469, 3519, 2000],
+	"stepSTD": 178.91,
+	"heartRates":[50, 55, 53, 49, 57, 51, 55, 54, 58, 49, 53, 52, 55, 52, 51],
+	"heartRatesSTD": 2.78,
+	"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
+	"drug":"LETAIRIS",
+	"zip":19104
+}; 
+
+data = {
+	"_COMMENTS": "NORMAL steps, NORMAL heart rate.",
+	"firstName": "Yupeng",
+	"lastName": "Sun",
+	"email": "Yupeng.Sun@drexel.edu",
+	"emergencyContact": "BobSun@gmail.com",
+	"occupation": "Trainning for Broad Street Marathon",
+	"steps":[4000, 4200, 4100, 3992, 4400, 5100, 4905, 4899, 5029, 4910, 4828, 4999, 5001, 5689, 5717],
+	"stepSTD": 500.40,
+	"heartRates":[50, 55, 54, 53, 52, 55, 53, 54, 55, 55, 56, 53, 54, 53, 54],
+	"heartRatesSTD": 1.54,
+	"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
+	"drug":"N/A",
+	"zip":19104
+}; 
+
+data = {
+	"_COMMENTS":"ABNORMAL step w/ weather, NORMAL heart rate, REMEMBER TO CHANGE THE ZIPCODE TO SOMEWHERE IT RAINS",
+	"firstName": "Tianze",
+	"lastName": "Bai",
+	"email": "Tianze.Bai@drexel.edu",
+	"emergencyContact": "EllenJohnson@yahoo.com",
+	"occupation": "Retired Veteran",
+	"steps":[1139, 1400, 1211, 1310, 1499, 1257, 1510, 1303, 1215, 1244, 1550, 1220, 1120, 1220, 1000],
+	"_COMMENTS": "ABNORMAL step w/ weather issue, NORMAL heart rate.",
+	"stepSTD": 137.99,
+	"heartRates":[72, 68, 68, 72, 70, 69, 68, 69, 71, 72, 69, 68, 68, 69, 71],
+	"heartRatesSTD": 1.61,
+	"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
+	"drug":"N/A",
+	"zip":50002	
+}; 
+
+data = {
+	"_COMMENTS": "ABNORMAL step w/ weather and drug, ABNORMAL heart rate w/ step and drug, prednisone is a steroid that treat many diseases, focus on inflammation",
+	"firstName": "Daniel",
+	"lastName": "Grayson",
+	"email": "Daniel.Grayson@drexel.edu",
+	"emergencyContact": "TinnaWang@aol.com",
+	"occupation": "90 Years Old Man",
+	"steps":[1139, 1400, 1211, 1310, 1499, 1257, 1510, 1303, 1215, 1244, 1550, 1220, 1120, 1220, 1000],
+	"stepSTD": 137.99,
+	"heartRates":[72, 68, 68, 72, 70, 69, 68, 69, 71, 72, 69, 68, 68, 69, 73],
+	"heartRatesSTD": 1.61,
+	"date":["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15"],
+	"drug":"prednisone",
+	"zip":50002	
+}; 
