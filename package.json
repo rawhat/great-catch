@@ -23,6 +23,7 @@
     "graphql": "^0.9.1",
     "graphql-server-koa": "^0.6.0",
     "graphql-tools": "^0.10.0",
+    "jsdom": "^10.1.0",
     "jsonwebtoken": "^7.2.1",
     "koa": "^2.0.0-alpha.7",
     "koa-better-body": "^3.0.2",

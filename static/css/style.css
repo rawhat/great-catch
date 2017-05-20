@@ -1,21 +1,28 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 
-#logo{
-	width: 422px;
-	height:57px;
-	margin:auto;
-	margin-top:15px;
-	
+#logo {
+  width: 422px;
+  height: 57px;
+  margin: auto;
+  margin-top: 15px;
 }
+
 html {
   overflow-y: scroll;
 }
 
-body {
+
+/*body {
   background: #f7f5f0;
   font-family: 'Titillium Web', sans-serif;
+}*/
+
+.navbar-right {
+  margin-right: 0px !important;
 }
 
 .content {
@@ -28,7 +35,7 @@ body {
   text-align: center;
 }
 
-.home-panel > a.btn {
+.home-panel>a.btn {
   margin: 5px;
 }
 
@@ -38,12 +45,12 @@ body {
   text-align: center;
 }
 
-.form-content > .input-group {
+.form-content>.input-group {
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-.form-content > .input-group > .input-group-addon {
+.form-content>.input-group>.input-group-addon {
   min-width: 175px;
   text-align: left;
 }
@@ -54,6 +61,7 @@ a {
   -webkit-transition: .5s ease;
   transition: .5s ease;
 }
+
 a:hover {
   color: #179b77;
 }
@@ -72,11 +80,13 @@ a:hover {
   padding: 0;
   margin: 0 0 40px 0;
 }
+
 .tab-group:after {
   content: "";
   display: table;
   clear: both;
 }
+
 .tab-group li a {
   display: block;
   text-decoration: none;
@@ -91,18 +101,25 @@ a:hover {
   -webkit-transition: .5s ease;
   transition: .5s ease;
 }
+
 .tab-group li a:hover {
   background: #179b77;
   color: #ffffff;
 }
+
 .tab-group .active a {
   background: #1ab188;
   color: #ffffff;
 }
 
-.tab-content > div:last-child {
+.tab-content>div:last-child {
   display: none;
 }
+
+#banner {
+  text-align: center;
+}
+
 
 /*h1 {
   text-align: center;
@@ -215,9 +232,9 @@ textarea {
 }*/
 
 #footer {
-    padding: 1em;
-    color: black;
-    background-color: #f7f5f0;
-    clear: left;
-    text-align: center;
+  padding: 1em;
+  color: black;
+  /*background-color: #f7f5f0;*/
+  clear: left;
+  text-align: center;
 }

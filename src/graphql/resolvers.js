@@ -2,51 +2,67 @@ var _ = require('lodash');
 var makeDBQuery = require('../../functions').makeDBQuery;
 
 async function doNestedQuery({ queryString, object }) {
-	let resultObject = await makeDBQuery({ queryString, object });
-	return resultObject;
+    let resultObject = await makeDBQuery({ queryString, object });
+    return resultObject;
 }
 
 const resolvers = {
-	Query: {
-		async user(root, args) {
-			let { username } = args;
-			// return _.omit(mockData[id], 'password');
-			let { records } = await makeDBQuery({ queryString: `
+    Query: {
+        async user(root, args) {
+            let { username } = args;
+            // return _.omit(mockData[id], 'password');
+            let { records } = await makeDBQuery({
+                queryString: `
 				MATCH (u:User) WHERE u.username = {username} RETURN u AS user, ID(u) as userId;
 			`,
-			object: {
-				username
-			}});
+                object: {
+                    username,
+                },
+            });
 
-			return Object.assign({}, _.omit(records[0].get('user').properties, 'password'), { id: records[0].get('userId').low });
-		},
-		async users() {
-			// return Object.keys(mockData).map(key => {
-			// 	return _.omit(mockData[key], 'password');
-			// });
-			let { records, error } = await makeDBQuery({ queryString: `
+            return Object.assign(
+                {},
+                _.omit(records[0].get('user').properties, 'password'),
+                { id: records[0].get('userId').low }
+            );
+        },
+        async users() {
+            // return Object.keys(mockData).map(key => {
+            // 	return _.omit(mockData[key], 'password');
+            // });
+            let { records, error } = await makeDBQuery({
+                queryString: `
 				MATCH (u:User) RETURN u AS user, ID(u) AS id;
-			`});
+			`,
+            });
 
-			let results = records.map(record => {
-				let id = record.get('id').low;
-				return Object.assign({}, _.omit(record.get('user').properties, 'password'), { id });
-			});
+            let results = records.map(record => {
+                let id = record.get('id').low;
+                return Object.assign(
+                    {},
+                    _.omit(record.get('user').properties, 'password'),
+                    { id }
+                );
+            });
 
-			return results;
-		}
-	},
-	Mutation: {
-		async addMedicine(root, args) {
-			let { username, medicine } = args;
+            return results;
+        },
+    },
+    Mutation: {
+        async addMedicine(root, args) {
+            let { username, medicine } = args;
 
-			// let medicineId = mockData[id].medicines.length;
+            // let medicineId = mockData[id].medicines.length;
 
-			// mockData[id].medicines = mockData[id].medicines.concat(Object.assign({}, medicine, { id: medicineId }));
+            // mockData[id].medicines = mockData[id].medicines.concat(Object.assign({}, medicine, { id: medicineId }));
 
-			let object = Object.assign({}, medicine, { addedAt: Date.now(), username });
+            let object = Object.assign({}, medicine, {
+                addedAt: Date.now(),
+                username,
+            });
 
-			let { records, error } = await makeDBQuery({ queryString: `
+            let { records, error } = await makeDBQuery({
+                queryString: `
 				MATCH (u:User) WHERE u.username = {username}
 				CREATE (u)-[:TAKES { addedAt: {addedAt}}]->(m:Medicine { 
 					name: {name}, 
@@ -57,22 +73,26 @@ const resolvers = {
 				})
 				RETURN m AS medicine;
 				`,
-				object
-			});
+                object,
+            });
 
-			return records[0].get('medicine').properties;
-		},
-		async addCaretaker(root, args) {
-			let { username, caretaker } = args;
+            return records[0].get('medicine').properties;
+        },
+        async addCaretaker(root, args) {
+            let { username, caretaker } = args;
 
-			// let caretakerId = mockData[id].caretakers.length;
+            // let caretakerId = mockData[id].caretakers.length;
 
-			// mockData[id].caretakers = mockData[id].caretakers.concat(Object.assign({}, caretaker, { id: caretakerId }));
-			// return caretaker;
+            // mockData[id].caretakers = mockData[id].caretakers.concat(Object.assign({}, caretaker, { id: caretakerId }));
+            // return caretaker;
 
-			let object = Object.assign({}, caretaker, { addedAt: Date.now(), username });
+            let object = Object.assign({}, caretaker, {
+                addedAt: Date.now(),
+                username,
+            });
 
-			let { records, error } = await makeDBQuery({ queryString: `
+            let { records, error } = await makeDBQuery({
+                queryString: `
 				MATCH (u:User) WHERE u.username = {username}
 				CREATE (u)-[:HAS { addedAt: {addedAt}}]->(c:Caretaker { 
 					role: {role},
@@ -81,22 +101,26 @@ const resolvers = {
 				})
 				RETURN c AS caretaker;
 				`,
-				object
-			});
+                object,
+            });
 
-			return records[0].get('caretaker').properties;
-		},
-		async addAlert(root, args) {
-			let { username, alert } = args;
+            return records[0].get('caretaker').properties;
+        },
+        async addAlert(root, args) {
+            let { username, alert } = args;
 
-			// let alertId = mockData[id].alerts.length;
+            // let alertId = mockData[id].alerts.length;
 
-			// mockData[id].alerts = mockData[id].alerts.concat(Object.assign({}, alert, { id: alertId }));
-			// return alert;
+            // mockData[id].alerts = mockData[id].alerts.concat(Object.assign({}, alert, { id: alertId }));
+            // return alert;
 
-			let object = Object.assign({}, alert, { triggeredAt: Date.now(), username });
+            let object = Object.assign({}, alert, {
+                triggeredAt: Date.now(),
+                username,
+            });
 
-			let { records, error } = await makeDBQuery({ queryString: `
+            let { records, error } = await makeDBQuery({
+                queryString: `
 				MATCH (u:User) WHERE u.username = username
 				CREATE (u)-[:TRIGGERED { triggeredAt: {triggeredAt}}]->(a:Alert { 
 					type: {type},
@@ -105,25 +129,29 @@ const resolvers = {
 				})
 				RETURN a AS alert;
 				`,
-				object
-			});
+                object,
+            });
 
-			return records[0].get('alert').properties;
-		},
-		async addSupportRequest(root, args) {
-			let { username, supportRequest } = args;
+            return records[0].get('alert').properties;
+        },
+        async addSupportRequest(root, args) {
+            let { username, supportRequest } = args;
 
-			// let requestId = mockData[id].supportRequests.length;
+            // let requestId = mockData[id].supportRequests.length;
 
-			// supportRequest = Object.assign({}, supportRequest, { createdAt: Date.now() });
+            // supportRequest = Object.assign({}, supportRequest, { createdAt: Date.now() });
 
-			// mockData[id].supportRequests = mockData[id].supportRequests.concat(Object.assign({}, supportRequest, { id: requestId }));
+            // mockData[id].supportRequests = mockData[id].supportRequests.concat(Object.assign({}, supportRequest, { id: requestId }));
 
-			// return supportRequest;
+            // return supportRequest;
 
-			let object = Object.assign({}, supportRequest, { createdAt: Date.now(), username });
+            let object = Object.assign({}, supportRequest, {
+                createdAt: Date.now(),
+                username,
+            });
 
-			let { records, error } = await makeDBQuery({ queryString: `
+            let { records, error } = await makeDBQuery({
+                queryString: `
 				MATCH (u:User) WHERE u.username = {username}
 				CREATE (u)-[:MADE { createdAt: {createdAt}}]->(s:SupportRequest { 
 					email: {email},
@@ -132,35 +160,35 @@ const resolvers = {
 				})
 				RETURN s AS supportRequest;
 				`,
-				object
-			});
+                object,
+            });
 
-			return records[0].get('supportRequest').properties;
-		},
-		async updateUser(root, args) {
-			let { username, updateUser } = args;
-			let object = Object.assign({}, updateUser, { username });
+            return records[0].get('supportRequest').properties;
+        },
+        async updateUser(root, args) {
+            let { username, updateUser } = args;
+            let object = Object.assign({}, updateUser, { username });
 
-			let { records, error } = await makeDBQuery({ 
-				queryString: `
+            let { records, error } = await makeDBQuery({
+                queryString: `
 					MATCH (u:User) WHERE u.username = {username}
 					SET u.firstName = {firstName},
 						u.lastName = {lastName},
 						u.email = {email}
 					RETURN u as user;
 				`,
-				object
-			});
-		
-			return records[0].get('user').properties;
-		},
-		async addUserData(root, args) {
-			let { username, data } = args;
-			let { stepCount, heartRate } = data;
-			let object = { username, stepCount, heartRate };
+                object,
+            });
 
-			let { records, error } = await makeDBQuery({
-				queryString: `
+            return records[0].get('user').properties;
+        },
+        async addUserData(root, args) {
+            let { username, data } = args;
+            let { stepCount, heartRate } = data;
+            let object = { username, stepCount, heartRate };
+
+            let { records, error } = await makeDBQuery({
+                queryString: `
 					MATCH (u:User)-[:GENERATED]-(d:Data)
 					WHERE u.username = {username}
 					SET 
@@ -168,112 +196,122 @@ const resolvers = {
 						d.heartRates = d.heartRates + {heartRate}
 					RETURN d AS data;
 				`,
-				object
-			});
+                object,
+            });
 
-			return records[0].get('data').properties;
-		}
-	},
-	User: {
-		async caretakers(obj) {
-			let { username } = obj;
+            return records[0].get('data').properties;
+        },
+    },
+    User: {
+        async caretakers(obj) {
+            let { username } = obj;
 
-			let { records, error } = await doNestedQuery({
-				queryString: `
+            let { records, error } = await doNestedQuery({
+                queryString: `
 					MATCH (u:User)-[:HAS]-(c:Caretaker)
 					WHERE u.username = {username}
 					RETURN c AS caretaker, ID(c) as caretakerId;
 				`,
-				object: { username }
-			});
+                object: { username },
+            });
 
-			if(records.length)
-				return records.map(record => {
-					return Object.assign({}, record.get('caretaker').properties, { id: record.get('caretakerId') });
-				});
-			else
-				return [];
-		},
-		async supportRequests(obj) {
-			let { username } = obj;
+            if (records.length)
+                return records.map(record => {
+                    return Object.assign(
+                        {},
+                        record.get('caretaker').properties,
+                        { id: record.get('caretakerId') }
+                    );
+                });
+            else return [];
+        },
+        async supportRequests(obj) {
+            let { username } = obj;
 
-			let { records, error } = await doNestedQuery({
-				queryString: `
+            let { records, error } = await doNestedQuery({
+                queryString: `
 					MATCH (u:User)-[:MADE]-(s:SupportRequest)
 					WHERE u.username = {username}
 					RETURN s as supportRequest, ID(s) as supportRequestId;
 				`,
-				object: { username }
-			});
+                object: { username },
+            });
 
-			if(records.length)
-				return records.map(record => {
-					return Object.assign({}, record.get('supportRequest').properties, { id: record.get('supportRequestId') });
-				});
-			else
-				return [];
-		},
-		async medicines(obj) {
-			let { username } = obj;
+            if (records.length)
+                return records.map(record => {
+                    return Object.assign(
+                        {},
+                        record.get('supportRequest').properties,
+                        { id: record.get('supportRequestId') }
+                    );
+                });
+            else return [];
+        },
+        async medicines(obj) {
+            let { username } = obj;
 
-			let { records, error } = await doNestedQuery({
-				queryString: `
+            let { records, error } = await doNestedQuery({
+                queryString: `
 					MATCH (u:User)-[:TAKES]-(m:Medicine)
 					WHERE u.username = {username}
 					RETURN m as medicine, ID(m) as medicineId;
 				`,
-				object: { username }
-			});
+                object: { username },
+            });
 
-			if(records.length){
-				return records.map(record => {
-					return Object.assign({}, record.get('medicine').properties, { id: record.get('medicineId') });
-				});
-			}
-			else
-				return [];
-		},
-		async alerts(obj) {
-			let { username } = obj;
+            if (records.length) {
+                return records.map(record => {
+                    return Object.assign(
+                        {},
+                        record.get('medicine').properties,
+                        { id: record.get('medicineId') }
+                    );
+                });
+            } else return [];
+        },
+        async alerts(obj) {
+            let { username } = obj;
 
-			let { records, error } = await doNestedQuery({
-				queryString: `
+            let { records, error } = await doNestedQuery({
+                queryString: `
 					MATCH (u:User)-[:TRIGGERED]-(a:Alert)
 					WHERE u.username = {username}
 					RETURN a as alert, ID(a) as alertId;
 				`,
-				object: { username }
-			});
+                object: { username },
+            });
 
-			if(records.length)
-				return records.map(record => {
-					return Object.assign({}, record.get('alert').properties, { id: record.get('alertId') });
-				});
-			else
-				return [];
-		},
-		async data(obj) {
-			let { username } = obj;
-			let { records, error } = await doNestedQuery({
-				queryString: `
+            if (records.length)
+                return records.map(record => {
+                    return Object.assign({}, record.get('alert').properties, {
+                        id: record.get('alertId'),
+                    });
+                });
+            else return [];
+        },
+        async data(obj) {
+            let { username } = obj;
+            let { records, error } = await doNestedQuery({
+                queryString: `
 					MATCH (u:User)-[:GENERATED]-(d:Data)
 					WHERE u.username = {username}
 					RETURN d AS data, ID(d) AS dataId
 				`,
-				object: { username }
-			});
+                object: { username },
+            });
 
-			if(records.length) {
-				let record = records[0];
-				return Object.assign({}, record.get('data').properties, { id: record.get('dataId') });
-			}
-			else {
-				return [];
-			}
-		}
-	}
+            if (records.length) {
+                let record = records[0];
+                return Object.assign({}, record.get('data').properties, {
+                    id: record.get('dataId'),
+                });
+            } else {
+                return [];
+            }
+        },
+    },
 };
 
 module.exports = {
-    resolvers
+    resolvers,
 };

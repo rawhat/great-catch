@@ -2,7 +2,8 @@
     "env": {
         "node": true,
         "browser": true,
-        "jquery": true
+        "jquery": true,
+        "es6": true
     },
     "parser": "babel-eslint",
     "parserOptions": {
@@ -21,8 +22,8 @@
     },
     "settings": {
         "react": {
-          "pragma": "React",
-          "version": "15.0"
+            "pragma": "React",
+            "version": "15.0"
         }
     }
 }

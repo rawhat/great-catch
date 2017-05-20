@@ -1,6 +1,7 @@
 /* CSS Document */
 
-#banner{
+
+/*#banner{
 margin-top:20px;
 margin-left:50px;
 
@@ -27,23 +28,29 @@ margin:20px auto;
 }
 #fitbit-auth-link{
   text-align:center;
-}
+}*/
+
 #footer {
-    padding: 1em;
-    color: black;
-    background-color: #f7f5f0;;
-    clear: left;
-    text-align: center;
+  padding: 1em;
+  color: black;
+  /*background-color: #f7f5f0;*/
+  clear: left;
+  text-align: center;
 }
 
+
+/*
 #header{
 	height:70px;
 	width:293px;
 	/*border:#000000 1px solid;*/
-	margin:auto;
-	margin-top: 20px;
-}
 
-#assessment, #draw{
-	padding: 2%;
+margin:auto;
+margin-top: 20px;
+
 }
+#assessment,
+#draw {
+  padding: 2%;
+}
+*/

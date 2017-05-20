@@ -93,6 +93,8 @@ const schema = `
 		id: Int!
 		stepCounts: [Int!]
 		heartRates: [Int!]
+		stepCountStdDev: Int!
+		heartRateStdDev: Int!
 	}
 
 	input InputUserData {
@@ -116,8 +118,8 @@ const schema = `
 `;
 
 module.exports = {
-	graphqlSchema: makeExecutableSchema({
-		typeDefs: schema,
-		resolvers
-	})
+    graphqlSchema: makeExecutableSchema({
+        typeDefs: schema,
+        resolvers,
+    }),
 };
