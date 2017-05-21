@@ -102,6 +102,7 @@ router.post('/login', async ctx => {
         let token = jwebtoken.sign(user, SESSION_KEYS[0], {
             expiresIn: 60 * 60 * 5,
         });
+        ctx.session.username = user.username;
         ctx.body = { token, username: user.username, email: user.email };
         ctx.status = 200;
     } else {
@@ -147,6 +148,14 @@ router.get('/auth/fitbit/callback', async ctx => {
         ctx.session.access_token = access_token;
         ctx.session.refresh_token = refresh_token;
         ctx.session.user_id = user_id;
+
+        await makeDBQuery(
+            `
+            MATCH (u:User) WHERE u.username =~ '(?i)${ctx.session.username}'
+            SET u.access_token = "${access_token}"
+            RETURN u;
+            `
+        );
 
         ctx.redirect('/');
     } catch (error) {
