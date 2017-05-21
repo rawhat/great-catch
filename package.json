@@ -38,6 +38,7 @@
     "koa-views": "^5.2.0",
     "lodash": "^4.17.4",
     "neo4j-driver": "^1.0.4",
+    "nodemailer": "^4.0.1",
     "oauth2-client": "0.0.4",
     "passport-fitbit-oauth2": "^1.0.2",
     "passport-jwt": "^2.2.1",
