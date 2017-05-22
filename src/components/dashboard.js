@@ -498,7 +498,9 @@ class Dashboard extends Component {
                             <h2>
                                 Welcome,
                                 {' '}
-                                <span id="userName">{this.state.username}</span>
+                                <span id="userName">
+                                    {this.state.firstName}
+                                </span>
                             </h2>
                         </div>
 
