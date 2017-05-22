@@ -7,6 +7,8 @@ const mailer = require('nodemailer');
 const deterDataSize = require('./static/demonstration_items/StepCount_Stat')
     .deterDataSize;
 
+const calculateStdDev = require('./functions').calculateStdDev;
+
 const driver = new neo4j.driver(
     'bolt://localhost',
     neo4j.auth.basic('neo4j', 'neo4j')
@@ -151,19 +153,6 @@ async function sendEmail(email, firstName, data) {
         }
         console.log(`Message ${info.messageId} send: ${info.response}`);
     });
-}
-
-function calculateStdDev(values) {
-    // step 1:  calculate mean
-    let mean = values.reduce((sum, next) => sum + next, 0) / values.length;
-
-    // step 2:  for each value, do -> (value - mean) squared
-    let diffSquared = values.map(value => (value - mean) ^ 2);
-
-    // steps 3, 4: square root of mean of step 2
-    return Math.sqrt(
-        diffSquared.reduce((sum, next) => sum + next, 0) / diffSquared.length
-    );
 }
 
 main();

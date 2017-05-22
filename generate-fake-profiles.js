@@ -268,7 +268,7 @@ const usersWithData = [
             'Day 15',
         ],
         drug: 'N/A',
-        zip: 50002,
+        zip: 19104,
     },
     {
         _COMMENTS: 'ABNORMAL step w/ weather and drug, ABNORMAL heart rate w/ step and drug, prednisone is a steroid that treat many diseases, focus on inflammation',
