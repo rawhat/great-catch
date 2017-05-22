@@ -19,7 +19,23 @@ const makeDBQuery = async ({ queryString, object }) => {
 
 var SESSION_KEYS = ['thisisatestkeyreplacewithbetterlater'];
 
+function calculateStdDev(values) {
+    // step 1:  calculate mean
+    let mean = values.reduce((sum, next) => sum + next, 0) / values.length;
+
+    // step 2:  for each value, do -> (value - mean) squared
+    let diffSquared = values.map(value => Math.pow(value - mean, 2));
+
+    // steps 3: calculate mean of differences
+    let diffMean =
+        diffSquared.reduce((sum, next) => sum + next, 0) / diffSquared.length;
+
+    // 4: square root of step 3
+    return Math.sqrt(diffMean);
+}
+
 module.exports = {
     makeDBQuery,
     SESSION_KEYS,
+    calculateStdDev,
 };
