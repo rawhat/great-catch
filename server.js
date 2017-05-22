@@ -3,6 +3,7 @@ var _ = require('lodash');
 var d3 = require('d3');
 var jsdom = require('jsdom');
 const { JSDOM } = jsdom;
+const jStat = require('jStat').jStat;
 
 var deterDataSize = require('./static/demonstration_items/StepCount_Stat')
     .deterDataSize;
@@ -11,7 +12,6 @@ var koa = require('koa');
 var app = new koa();
 const session = require('koa-session');
 var SESSION_KEYS = require('./functions.js').SESSION_KEYS;
-var calculateStdDev = require('./functions').calculateStdDev;
 
 // const router = require('./routes.js').router;
 
@@ -393,8 +393,8 @@ router.post('/api/fitbit', jwt, async ctx => {
                         : null)
             );
 
-        let stepCountStdDev = calculateStdDev(stepCounts);
-        let heartRateStdDev = calculateStdDev(heartRates);
+        let stepCountStdDev = jStat.stdev(stepCounts);
+        let heartRateStdDev = jStat.stdev(heartRates);
 
         ctx.body = {
             stepCounts,
