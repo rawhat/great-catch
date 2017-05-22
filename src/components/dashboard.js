@@ -278,25 +278,19 @@ class Dashboard extends Component {
             { headers: this.headerObject() }
         );
 
-        let { stepCounts, heartRates } = response.data;
-
-        stepCounts = stepCounts['activities-steps']
-            .slice(-14)
-            .map(step => parseInt(step.value));
-
-        heartRates = heartRates['activities-heart']
-            .slice(-14)
-            .map(
-                heart =>
-                    (heart.value.restingHeartRate
-                        ? parseInt(heart.value.restingHeartRate)
-                        : null)
-            );
+        let {
+            stepCounts,
+            heartRates,
+            stepCountStdDev,
+            heartRateStdDev,
+        } = response.data;
 
         this.setState(
             {
                 stepCounts,
                 heartRates,
+                stepCountStdDev,
+                heartRateStdDev,
             },
             () => {
                 this.drawHeartRateChart();

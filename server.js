@@ -11,6 +11,7 @@ var koa = require('koa');
 var app = new koa();
 const session = require('koa-session');
 var SESSION_KEYS = require('./functions.js').SESSION_KEYS;
+var calculateStdDev = require('./functions').calculateStdDev;
 
 // const router = require('./routes.js').router;
 
@@ -378,9 +379,28 @@ router.post('/api/fitbit', jwt, async ctx => {
     try {
         let stepData = await requestObject.get(stepUrl);
         let heartRateData = await requestObject.get(heartRateUrl);
+
+        let stepCounts = stepData.data['activities-steps']
+            .slice(-14)
+            .map(step => parseInt(step.value));
+
+        let heartRates = heartRateData.data['activities-heart']
+            .slice(-14)
+            .map(
+                heart =>
+                    (heart.value.restingHeartRate
+                        ? parseInt(heart.value.restingHeartRate)
+                        : null)
+            );
+
+        let stepCountStdDev = calculateStdDev(stepCounts);
+        let heartRateStdDev = calculateStdDev(heartRates);
+
         ctx.body = {
-            stepCounts: stepData.data,
-            heartRates: heartRateData.data,
+            stepCounts,
+            heartRates,
+            stepCountStdDev,
+            heartRateStdDev,
         };
     } catch (e) {
         if (e.response) {
