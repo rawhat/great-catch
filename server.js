@@ -45,7 +45,8 @@ const jwebtoken = require('jsonwebtoken');
 
 const CLIENT_ID = '22852C';
 const CLIENT_SECRET = '9afe2c57a50708816966d992bf8fa4f7';
-const REDIRECT_URI = 'http://www.greatcatchhelp.com/auth/fitbit/callback';
+// const REDIRECT_URI = 'http://www.greatcatchhelp.com/auth/fitbit/callback';
+const REDIRECT_URI = 'http://localhost:3000/auth/fitbit/callback';
 
 var ClientOAuth2 = require('client-oauth2');
 
@@ -149,14 +150,6 @@ router.get('/auth/fitbit/callback', async ctx => {
         ctx.session.refresh_token = refresh_token;
         ctx.session.user_id = user_id;
 
-        await makeDBQuery(
-            `
-            MATCH (u:User) WHERE u.username =~ '(?i)${ctx.session.username}'
-            SET u.access_token = "${access_token}"
-            RETURN u;
-            `
-        );
-
         ctx.redirect('/');
     } catch (error) {
         if (error.response) {
@@ -193,7 +186,7 @@ router.post('/auth/fitbit/refresh', jwt, async ctx => {
         let response = await request.post(fitbitTokenUrl);
 
         ctx.session = Object.assign(ctx.session, response.data);
-        ctx.redirect('/user/profile');
+        ctx.redirect('/dashboard');
     } catch (error) {
         if (error.response) {
             // The request was made, but the server responded with a status code
@@ -265,7 +258,47 @@ router.post('/user/create', async ctx => {
 });
 
 router.get('/user/profile', jwt, async (ctx, next) => {
-    ctx.body = { auth_token: ctx.session.access_token };
+    try {
+        let { username, access_token } = ctx.session;
+
+        if (access_token) {
+            try {
+                let headers = {
+                    Authorization: `Bearer ${ctx.session.access_token}`,
+                };
+
+                let requestObject = axios.create({
+                    headers,
+                });
+
+                await requestObject.get(
+                    'https://api.fitbit.com/1/user/-/activities/steps/date/2017-01-12/30d.json'
+                );
+
+                await makeDBQuery({
+                    queryString: `
+                    MATCH (u:User) WHERE u.username =~ '(?i)${username}'
+                    SET u.access_token = {access_token}
+                    RETURN u;
+                    `,
+                    object: { access_token },
+                });
+
+                ctx.body = { auth_token: ctx.session.access_token };
+            } catch (e) {
+                console.error(e);
+                ctx.status = 401;
+                ctx.body = 'Access token expired.';
+            }
+        } else {
+            ctx.status = 401;
+            ctx.body = 'No access token.';
+        }
+    } catch (e) {
+        console.error(e);
+        ctx.status = 500;
+        ctx.body = e;
+    }
 });
 
 router.get('/user/:id/profile', async ctx => {
@@ -319,7 +352,7 @@ router.get('/auth/fitbit', async ctx => {
 });
 
 router.post('/api/fitbit', jwt, async ctx => {
-    let { data_set, date = 'today', period = '1y' } = ctx.request.body;
+    // let { data_set, date = 'today', period = '1y' } = ctx.request.body;
 
     // let url = 'https://api.fitbit.com/1/user/-';
     // switch(data_set) {
@@ -328,8 +361,11 @@ router.post('/api/fitbit', jwt, async ctx => {
     //         break;
     //     }
     // }
-    let url =
-        'https://api.fitbit.com/1/user/-/activities/steps/date/2017-01-12/7d.json';
+    let stepUrl =
+        'https://api.fitbit.com/1/user/-/activities/steps/date/2017-01-12/30d.json';
+
+    let heartRateUrl =
+        'https://api.fitbit.com/1/user/-/activities/heart/date/2017-01-12/30d.json';
 
     let headers = {
         Authorization: `Bearer ${ctx.session.access_token}`,
@@ -340,8 +376,12 @@ router.post('/api/fitbit', jwt, async ctx => {
     });
 
     try {
-        let response = await requestObject.get(url);
-        ctx.body = response.data;
+        let stepData = await requestObject.get(stepUrl);
+        let heartRateData = await requestObject.get(heartRateUrl);
+        ctx.body = {
+            stepCounts: stepData.data,
+            heartRates: heartRateData.data,
+        };
     } catch (e) {
         if (e.response) {
             let { data } = e.response;

@@ -67,6 +67,18 @@ const usersWithData = [
         ],
         drug: 'N/A',
         zip: 19104,
+        alerts: [
+            {
+                priority: 'medium',
+                date: new Date().setDate(new Date().getDate() - 3),
+                contact: 'JohnManning@gmail.com',
+                message: `<div>Step Count has been determined ABNORMAL using mean absolute deviation (MAD).<br>
+                    - Your new MAD value is less than or equal to old MAD.<br>
+                    <br><br>
+                    Heart Rates has been determined NORMAL using mean absolute deviation (MAD).<br>
+                    - Your new MAD value is greater than old MAD</div>`,
+            },
+        ],
     },
     {
         _COMMENTS: 'ABNORMAL step w/ drug (letairis: pulmonary arterial hypertension drug that cause fatigue), NORMAL heart rate.',
@@ -1153,6 +1165,12 @@ async function main() {
                     CREATE (u)-[:HAS]->(c:Caretaker { role: "${caretaker.role}", email: "${caretaker.email}"${caretaker.phone ? `, phone: "${caretaker.phone}"` : ''} })
                     CREATE (u)-[:GENERATED]->(d:Data { stepCounts: [${user.steps.join(', ')}], heartRates: [${user.heartRates.join(', ')}], stepCountStdDev: ${user.stepSTD}, heartRateStdDev: ${user.heartRatesSTD} })
                     ${user.drug !== 'N/A' ? `CREATE (u)-[:TAKES]->(:Medicine { name: "${user.drug}", dosage: "lots", frequency: "often", additionalInstructions: [], sideEffects: []})` : ''}
+                    ${user.alerts && user.alerts.length ? user.alerts
+                          .map(
+                              alert =>
+                                  `CREATE (u)-[:TRIGGERED]->(a:Alert { date: "${new Date(alert.date).toLocaleString()}", priority: "${alert.priority}", contact: "${alert.contact}", message: "${alert.message}" })`
+                          )
+                          .join('\n') : ''}
                     RETURN u;
                 `;
                 return session.run(str, user);

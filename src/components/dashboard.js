@@ -35,6 +35,7 @@ class Dashboard extends Component {
             caretakers: [],
             stepCounts: [],
             heartRates: [],
+            alerts: [],
             analysis: '',
             zipCode: -1,
         };
@@ -195,6 +196,12 @@ class Dashboard extends Component {
                         stepCountStdDev
                         heartRateStdDev
                     }
+                    alerts {
+                        date
+                        priority
+                        contact
+                        message
+                    }
                 }
             }
         `;
@@ -210,6 +217,7 @@ class Dashboard extends Component {
                 caretakers,
                 data,
                 zipCode,
+                alerts,
             } = response.data.data.user;
             this.setState(
                 {
@@ -223,6 +231,7 @@ class Dashboard extends Component {
                     stepCountStdDev: data.stepCountStdDev,
                     heartRateStdDev: data.heartRateStdDev,
                     zipCode,
+                    alerts,
                 },
                 () => {
                     this.drawStepChart();
@@ -236,35 +245,65 @@ class Dashboard extends Component {
     };
 
     getAccessToken = async () => {
-        let response = await axios.get('/user/profile', {
-            headers: this.headerObject(),
-        });
-        let { auth_token } = response.data;
+        try {
+            let response = await axios.get('/user/profile', {
+                headers: this.headerObject(),
+            });
+            let { auth_token } = response.data;
 
-        this.setState(state => {
-            return {
-                ...state,
-                access_token: auth_token,
-            };
-        });
+            this.setState(state => {
+                return {
+                    ...state,
+                    access_token: auth_token,
+                };
+            });
+        } catch (e) {
+            console.error('Not authorized');
+        }
     };
 
     getFitbitData = async () => {
-        let dataType = this.dataType.value;
-        let dateRange = this.dateRange.value;
-        let selectedDate = this.selectedDate.value;
+        // let dataType = this.dataType.value;
+        // let dateRange = this.dateRange.value;
+        // let selectedDate = this.selectedDate.value;
 
         let response = await axios.post(
             '/api/fitbit',
-            {
-                dataType,
-                dateRange,
-                selectedDate,
-            },
+            {},
+            // {
+            //     dataType,
+            //     dateRange,
+            //     selectedDate,
+            // },
             { headers: this.headerObject() }
         );
 
-        this.drawChart(response.data);
+        let { stepCounts, heartRates } = response.data;
+
+        stepCounts = stepCounts['activities-steps']
+            .slice(-14)
+            .map(step => parseInt(step.value));
+
+        heartRates = heartRates['activities-heart']
+            .slice(-14)
+            .map(
+                heart =>
+                    (heart.value.restingHeartRate
+                        ? parseInt(heart.value.restingHeartRate)
+                        : null)
+            );
+
+        this.setState(
+            {
+                stepCounts,
+                heartRates,
+            },
+            () => {
+                this.drawHeartRateChart();
+                this.drawStepChart();
+                this.runAnalysis();
+            }
+        );
     };
 
     drawStepChart = () => {
@@ -439,13 +478,15 @@ class Dashboard extends Component {
                 <nav className="navbar navbar-default navbar-fixed-top">
                     <div className="container-fluid clearfix">
                         <div className="navbar-header">
-                            <img
-                                src="/img/logo.png"
-                                alt=""
-                                height="50px"
-                                width="auto"
-                                style={{ padding: 5, margin: '0 auto' }}
-                            />
+                            <a href="/">
+                                <img
+                                    src="/img/logo.png"
+                                    alt=""
+                                    height="50px"
+                                    width="auto"
+                                    style={{ padding: 5, margin: '0 auto' }}
+                                />
+                            </a>
                         </div>
                         <a
                             href="#"
@@ -748,6 +789,16 @@ class Dashboard extends Component {
                                 marginRight: 0,
                             }}
                         >
+                            {this.state.alerts && this.state.alerts.length
+                                ? <button
+                                      className="btn btn-success"
+                                      onClick={() =>
+                                          this.props.router.push('/alerts')}
+                                      style={{ margin: 20 }}
+                                  >
+                                      Alert History
+                                  </button>
+                                : null}
                             {this.state.editing
                                 ? <div
                                       className="btn btn-success"
@@ -771,7 +822,13 @@ class Dashboard extends Component {
                                   >
                                       Authorize FitBit
                                   </a>
-                                : null}
+                                : <button
+                                      className="btn btn-info"
+                                      style={{ margin: 20 }}
+                                      onClick={this.getFitbitData}
+                                  >
+                                      Get FitBit Data
+                                  </button>}
                         </div>
                         {/*
                     <div id="userInput">
