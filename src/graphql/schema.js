@@ -61,15 +61,17 @@ const schema = `
 
 	type Alert {
 		id: Int!
-		type: String!
+		date: String!
 		priority: String!
-		method: String!
+		contact: String!
+		message: String!
 	}
 
 	input InputAlert {
-		type: String!
 		priority: String!
-		method: String!
+		date: String!
+		contact: String!
+		message: String!
 	}
 
 	type UserMedicine {
